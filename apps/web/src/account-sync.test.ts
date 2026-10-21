@@ -120,4 +120,11 @@ describe('account-isolated durable automatic synchronization', () => {
       expect(f.sync.view.status).toBe('error');
     } finally { f.sync.dispose(); vi.useRealTimers(); }
   });
+  it('refreshes a changed profile name without replacing the account plan or refetching it', async () => {
+    const f = fixture(); await f.sync.connect(user);
+    const before = f.sync.view.record; const reads = f.fetch.mock.calls.length;
+    await f.sync.connect({ ...user, name: 'Alex' });
+    expect(f.sync.view.identity?.name).toBe('Alex');
+    expect(f.sync.view.record).toBe(before); expect(f.fetch).toHaveBeenCalledTimes(reads);
+  });
 });

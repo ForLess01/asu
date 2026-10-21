@@ -41,7 +41,11 @@ export class AccountSync {
     else if (this.view.identity) void this.refresh();
   }
   async connect(identity: CloudIdentity | null, guest?: Workspace): Promise<void> {
-    if (identity?.id && this.view.identity?.id === identity.id) { if (this.connecting) await this.connecting; else if (!this.ready) await this.refresh(); return; }
+    if (identity?.id && this.view.identity?.id === identity.id) {
+      if (identity.name !== this.view.identity.name || identity.email !== this.view.identity.email) this.emit({ identity });
+      if (this.connecting) await this.connecting; else if (!this.ready) await this.refresh();
+      return;
+    }
     const epoch = ++this.epoch; this.cancelRetry(); this.ready = false; this.attempts = 0;
     this.emit({ identity, record: null, status: identity ? 'loading' : 'guest' });
     if (!identity) return;

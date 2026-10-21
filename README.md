@@ -28,6 +28,7 @@ Open `http://127.0.0.1:5174`. No account, API key or environment variable is nee
 - Experimental model inference in a Web Worker, with supported EPS/department pairs, source dates, integrity-checked evidence and explicit abstentions.
 - Optional email sign-up/sign-in and automatic Neon saving, account-isolated offline backups, cross-device recovery and explicit revision-conflict resolution. Visible status distinguishes guest/local, pending/offline and server-confirmed cloud saves; interactive Google login remains pending.
 - Department selectors, district/EPS reference suggestions, validated choices and unique-prefix Tab completion. Custom names stay editable; suggestions never invent measurements.
+- Managed profile names and personalized household context; animated water surfaces, icon/button feedback and task-completion responses, with per-device pause and system reduced-motion support.
 
 No live official feed, background push, sensor reading, water-potability certification or household savings claim is fabricated.
 

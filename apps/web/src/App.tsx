@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { House, Droplets, SlidersHorizontal, History, ListChecks, Settings2, FlaskConical, Bell, ArrowUpRight, WifiOff, ShieldCheck } from 'lucide-react';
+import { House, Droplets, SlidersHorizontal, History, ListChecks, Settings2, FlaskConical, Bell, ArrowUpRight, WifiOff, ShieldCheck, LoaderCircle, CloudOff } from 'lucide-react';
 import { emptyWorkspace, exampleWorkspace, revise, type Workspace } from '../../../packages/domain/src/index';
 import { Context, type Page } from './context';
 import { readWorkspace, writeWorkspace, recoverWorkspace, tabId, type StorageKey } from './storage';
@@ -9,11 +9,13 @@ import { Lab } from './Lab';
 import { HouseholdForm } from './forms';
 import { useClock } from './useClock';
 import { useAccount } from './useAccount';
+import { useMotion } from './useMotion';
 
 const pageIds: Page[] = ['home', 'reserve', 'plan', 'incidents', 'tasks', 'settings', 'lab'];
 function hashPage(): Page { const value = location.hash.slice(1) as Page; return pageIds.includes(value) ? value : 'home'; }
 
 export function App() {
+  const motion = useMotion();
   const now = useClock();
   const [local, setState] = useState<Workspace>(emptyWorkspace);
   const [mode, setMode] = useState<StorageKey>('guest');
@@ -79,7 +81,8 @@ export function App() {
     { id: 'tasks' as const, icon: ListChecks, label: t('Pendientes', 'Tasks') },
   ];
   const storageLabel = mode === 'example' ? t('Ejemplo · no se sincroniza', 'Example · never synchronized') : account.checking ? t('Comprobando cuenta…', 'Checking account…') : !inAccount ? t('Invitado · guardado local', 'Guest · local storage') : account.status === 'synced' ? account.record?.remote ? t('Guardado en Neon', 'Saved in Neon') : t('Cuenta lista para guardar', 'Account ready to save') : account.status === 'syncing' ? t('Guardando en Neon…', 'Saving to Neon…') : account.status === 'offline' ? t('Sin conexión · copia local', 'Offline · local backup') : account.status === 'conflict' ? t('Conflicto · revisa tu copia', 'Conflict · review your copy') : account.status === 'error' ? t('Pendiente · copia local segura', 'Pending · local backup retained') : t('Cargando cuenta…', 'Loading account…');
-  return <Context.Provider value={{ state, mode, busy, online, now, account, t, commit, notify, navigate, switchMode }}>
+  const SaveIcon = account.status === 'syncing' ? LoaderCircle : account.status === 'error' || account.status === 'offline' || account.status === 'conflict' ? CloudOff : ShieldCheck;
+  return <Context.Provider value={{ state, mode, busy, online, now, account, motion, t, commit, notify, navigate, switchMode }}>
     <a className="skip-link" href="#main-content">{t('Saltar al contenido', 'Skip to content')}</a>
     <div className="app-shell">
       <aside className="sidebar"><a href="#home" className="brand" aria-label={t('Asu, inicio', 'Asu home')}><img src="/brand/asu-logo.svg" alt="Asu" /></a><p className="brand-tagline">{t('Tu agua, con un plan.', 'Your water, with a plan.')}</p>
@@ -89,7 +92,7 @@ export function App() {
       <div className="workspace"><header className="topbar"><div className="mobile-brand"><a href="#home"><img src="/brand/asu-logo.svg" alt="Asu" /></a></div><div className="workspace-location"><House size={17} /><span>{state.household?.label ?? t('Bienvenido a Asu', 'Welcome to Asu')}</span>{state.household && <span className="muted desktop-only">/ {state.household.district}</span>}</div><div className="topbar-actions"><button className="language-button" onClick={() => void commit(revise(state, draft => { draft.locale = state.locale === 'en' ? 'es-PE' : 'en'; }))} aria-label={t('Switch to English', 'Cambiar a español')} disabled={busy}>{state.locale === 'en' ? 'ES' : 'EN'}</button><a className="icon-button" href="#tasks" aria-label={t('Notificaciones y pendientes', 'Notifications and tasks')}><Bell size={20} /></a><a href="#settings" className="guest-avatar" aria-label={t('Ajustes de cuenta y datos', 'Account and data settings')}><Settings2 size={20} /></a></div></header>
         {mode === 'example' && <div className="example-banner"><span>{t('Modo ejemplo · datos ficticios separados de tu hogar', 'Example mode · fictional data separate from your household')}</span><button onClick={() => void switchMode('guest')}>{t('Volver a mis datos', 'Back to my data')}<ArrowUpRight size={16} /></button></div>}
         {!online && <div className="banner"><WifiOff size={18} />{t('Sin conexión. Tu plan local sigue disponible; no hay información oficial en vivo.', 'Offline. Your local plan remains available; there is no live official information.')}</div>}
-        {inAccount && <div className={`account-status ${account.status === 'error' || account.status === 'conflict' ? 'account-warning' : ''}`} role="status"><ShieldCheck size={18} /><span data-testid="account-save-status">{storageLabel}</span><a href="#settings">{t('Ver cuenta y sincronización', 'Account and sync details')}</a></div>}
+        {inAccount && <div className={`account-status ${account.status === 'error' || account.status === 'conflict' ? 'account-warning' : ''}`} role="status"><SaveIcon key={account.status} className={account.status === 'syncing' ? 'icon-spin' : account.status === 'synced' ? 'icon-confirm' : undefined} size={18} /><span data-testid="account-save-status">{storageLabel}</span><a href="#settings">{t('Ver cuenta y sincronización', 'Account and sync details')}</a></div>}
         {conflict && <div className="banner warning" role="alert"><span>{t('Otra pestaña cambió el plan. No sobrescribiremos sus cambios.', 'Another tab changed this plan. We will not overwrite its changes.')}</span><button onClick={() => void (inAccount ? account.sync.reloadLocal() : readWorkspace(mode).then(setState)).then(() => setConflict(false)).catch(() => notify(t('No se pudo recargar.', 'Could not reload.'), true))}>{t('Recargar datos', 'Reload data')}</button></div>}
         <main id="main-content" className="main-content">
           {!state.household && page !== 'settings' && page !== 'lab' ? <div className="onboarding"><div className="intro"><span className="eyebrow">{t('Menos incertidumbre, más organización', 'Less uncertainty, more clarity')}</span><h1 id="page-title">{t('Que un corte no te encuentre sin un plan.', 'Make a plan before the water stops.')}</h1><p>{t('Conoce tu reserva, organiza lo esencial y decide con calma. Comienza por tu hogar; puedes añadir el agua después.', 'Know your reserves, organize the essentials, and decide with confidence. Start with your household; add your water later.')}</p><ol className="onboarding-steps"><li><span>1</span>{t('Cuéntanos sobre tu hogar', 'Tell us about your home')}</li><li><span>2</span>{t('Registra el agua que tienes', 'Record the water you have')}</li><li><span>3</span>{t('Compara y organiza tu plan', 'Compare and organize your plan')}</li></ol><button className="text-button" onClick={() => void switchMode('example')}>{t('Primero, explorar un ejemplo', 'Explore an example first')}<ArrowUpRight size={18} /></button></div><section className="setup-panel"><p className="eyebrow">{t('Paso 1 · tu hogar', 'Step 1 · your household')}</p><h2>{t('Empecemos por lo simple', 'Start with the basics')}</h2><HouseholdForm onDone={() => navigate('home')} /></section></div> : page === 'home' ? <Overview /> : page === 'reserve' ? <Reserves /> : page === 'plan' ? <Planner /> : page === 'incidents' ? <Incidents /> : page === 'tasks' ? <Tasks /> : page === 'settings' ? <Settings /> : <Lab />}

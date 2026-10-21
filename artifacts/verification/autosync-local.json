@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-10-21T13:38:38.923Z",
+  "observed_at": "2026-10-21T16:30:39.714Z",
   "origin": "http://127.0.0.1:5186",
   "status": "passed",
   "failed_stage": null,
@@ -7,7 +7,10 @@
     "credentials_file_private": true,
     "real_seed_account_signin": true,
     "direct_database_seed_hydrated_without_manual_restore": true,
+    "managed_profile_name_visible": true,
+    "personalized_department_visible": true,
     "seeded_containers_present": true,
+    "personalized_container_labels": true,
     "automatic_online_rpc_succeeded": true,
     "online_edit_survives_reload": true,
     "offline_edit_retained": true,
@@ -16,7 +19,7 @@
     "mobile_has_no_horizontal_overflow": true,
     "logout_returns_to_isolated_guest": true
   },
-  "checks_passed": 11,
+  "checks_passed": 14,
   "persistent_seed_account_retained": true,
   "original_seed_volume_restored": true,
   "credentials_or_account_identifiers_included": false

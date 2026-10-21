@@ -6,6 +6,7 @@
   --positive-bg: var(--mint-50); --warning-bg: #fff5df; --warning-text: #795111; --danger: #a53032;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
   --control-radius: 10px; --panel-radius: 18px; --control-height: 48px;
+  --ease-feedback: cubic-bezier(.22, 1, .36, 1);
   font-family: 'Montserrat', sans-serif; color: var(--ink); background: var(--canvas);
   font-synthesis: none; font-size: 15px; font-weight: 400; line-height: 1.65; -webkit-font-smoothing: antialiased;
 }
@@ -85,6 +86,8 @@ small, .hint { font-size: 12px; line-height: 1.7; color: var(--muted); }
 .page-heading > div { max-width: 680px; }
 .page-heading > button { flex-shrink: 0; font-size: 12px; }
 .page-description { color: var(--muted); font-size: 13px; line-height: 1.8; margin: 0; max-width: 610px; }
+.household-context { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: -12px 0 24px; font-size: 12px; color: var(--muted); }
+.household-context strong { color: var(--ink); font-weight: 600; }
 .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 24px; }
 .dashboard-aside { min-width: 0; }
 .reserve-overview { background: var(--brand); color: white; border-radius: var(--panel-radius); padding: 24px 28px 0; overflow: hidden; }
@@ -100,8 +103,13 @@ small, .hint { font-size: 12px; line-height: 1.7; color: var(--muted); }
 .tank-column { position: relative; width: 37px; height: 98px; border: 1px solid #b6e2d580; border-radius: 7px; background: #ffffff0c; overflow: hidden; }
 .tank-column::after { content: ''; position: absolute; inset: 12px 0; background: repeating-linear-gradient(to top, transparent 0 17px, #ffffff25 17px 18px); }
 .tank-column:first-child { height: 74px; width: 28px; }
-.tank-water { position: absolute; inset: auto 0 0; background: #93e9cc; }
-.tank-water.other { background: var(--accent); }
+.tank-fill { position: absolute; inset: 0; color: #93e9cc; transition: transform 280ms var(--ease-feedback); }
+.tank-fill.other { color: var(--accent); }
+.tank-water { position: absolute; inset: 8px 0 0; background: currentColor; }
+.water-wave { position: absolute; top: 0; left: 0; width: 200%; height: 10px; fill: currentColor; animation: water-drift 6s linear infinite; }
+.water-wave.back { opacity: .5; color: #d7fff0; animation-duration: 9s; animation-direction: reverse; }
+.tank-column.compact { width: 30px; height: 46px; border-color: #7fb7a8; border-radius: 5px; }
+@keyframes water-drift { to { transform: translateX(-50%); } }
 .reserve-card-bottom { border-top: 1px solid #ffffff35; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; }
 .reserve-card-bottom > div { display: flex; gap: 8px; font-size: 10px; align-items: center; max-width: 60%; }
 .reserve-card-bottom button { color: white; font-size: 10px; background: transparent; border: 0; padding: 8px 0; gap: 8px; }
@@ -184,7 +192,7 @@ td:first-child, th:first-child { padding-left: 0; }
 .container-level { width: 160px; flex-shrink: 0; }
 .container-level p { font-size: 10px; color: var(--muted); margin: 8px 0; }
 .level-track { height: 5px; border-radius: 5px; background: var(--border); overflow: hidden; }
-.level-track > div { height: 100%; background: var(--brand); border-radius: 5px; }
+.level-track > div { width: 100%; height: 100%; background: var(--brand); border-radius: 5px; transform-origin: left; transition: transform 250ms var(--ease-feedback); }
 .row-actions { display: flex; gap: 8px; flex-shrink: 0; }
 .stale { color: var(--warning-text) !important; }
 .plain-section { margin: 48px 0 24px; max-width: 850px; }
@@ -225,6 +233,26 @@ dd { margin: 0; font-size: 13px; overflow-wrap: anywhere; }
 .task-list label { flex: 1; overflow-wrap: anywhere; min-width: 0; }
 .task-list label span { min-width: 0; }
 .task-list label.completed { text-decoration: line-through; color: var(--muted); }
+.completion-mark { flex-shrink: 0; margin-left: auto; color: var(--brand); opacity: 0; transform: scale(.9); }
+.completed .completion-mark { opacity: 1; transform: none; animation: task-confirm 220ms var(--ease-feedback); }
+@keyframes task-confirm { from { opacity: .25; transform: scale(.9) rotate(-15deg); } to { opacity: 1; transform: none; } }
+.icon-spin { animation: icon-spin 800ms linear infinite; }
+.icon-confirm { animation: task-confirm 180ms var(--ease-feedback); }
+@keyframes icon-spin { to { transform: rotate(360deg); } }
+button svg, .button svg { transition: transform 140ms var(--ease-feedback), color 140ms ease; }
+@media (hover: hover) {
+  button:not(:disabled):hover > svg, .button:hover > svg { transform: translateY(-1px); }
+  .text-button:hover > .lucide-arrow-right { transform: translateX(3px); }
+  .icon-button:not(:disabled):hover > svg { transform: rotate(-7deg); }
+}
+.modal[open] { animation: modal-enter 180ms var(--ease-feedback); }
+@keyframes modal-enter { from { opacity: .6; transform: translateY(5px) scale(.985); } to { opacity: 1; transform: none; } }
+.toast { animation: toast-enter 180ms var(--ease-feedback); }
+@keyframes toast-enter { from { opacity: .5; translate: 0 6px; } to { opacity: 1; translate: 0 0; } }
+:root[data-page-visible='false'] .water-wave, :root[data-page-visible='false'] .icon-spin { animation-play-state: paused; }
+:root[data-input-method='keyboard'] button, :root[data-input-method='keyboard'] button svg, :root[data-input-method='keyboard'] .tank-fill, :root[data-input-method='keyboard'] .level-track > div { transition: none; }
+:root[data-input-method='keyboard'] .completion-mark, :root[data-input-method='keyboard'] .modal, :root[data-input-method='keyboard'] .toast, :root[data-input-method='keyboard'] .icon-confirm { animation: none; }
+:root[data-motion='off'] *, :root[data-motion='off'] *::before, :root[data-motion='off'] *::after { animation: none !important; transition: none !important; }
 .task-list small { display: block; font-size: 10px; margin-top: 4px; }
 .quiet-panel .task-list { font-size: 11px; }
 .quiet-panel .task-list label { font-size: 11px; }

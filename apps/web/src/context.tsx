@@ -2,11 +2,13 @@ import { createContext, useContext } from 'react';
 import type { Workspace } from '../../../packages/domain/src/index';
 import type { StorageKey } from './storage';
 import type { Account } from './useAccount';
+import type { MotionPreference } from './useMotion';
 
 export type Page = 'home' | 'reserve' | 'plan' | 'incidents' | 'tasks' | 'settings' | 'lab';
 export type AsuContext = {
   state: Workspace; mode: StorageKey; busy: boolean; online: boolean; now: number;
   account: Account;
+  motion: MotionPreference;
   t: (es: string, en: string) => string;
   commit: (next: Workspace) => Promise<boolean>;
   notify: (message: string, error?: boolean) => void;

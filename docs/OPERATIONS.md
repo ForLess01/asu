@@ -53,6 +53,20 @@ ASU_RUN_SEED_TESTS=1 ASU_ACCOUNT_ORIGIN=https://asu-forless01.pages.dev npx play
 
 These tests retain the seeded account, temporarily change its synthetic tank volume and restore it afterward. They verify automatic remote hydration, saving outside Settings, reload, offline durability, reconnection, a second device and logout isolation. Receipts are `autosync-local.json` and `autosync-public.json`; the old `neon-hosted*.json` files are historical manual-sync evidence, not claims that the old UI still exists. The disposable tenant-isolation suite now writes `neon-autosync-hosted*.json`.
 
+The owner subsequently requested a personalized Puno household. `scripts/personalize_account.py --display-name "<name>"` inspects the existing credential-backed account; adding `--apply` creates a private mode-0600 `.env.account-backup-*.local`, updates the workspace using its expected remote revision, and updates the managed Auth name with the authenticated profile API. It preserves the login, existing values and custom entries, and avoids duplicate additions on retries. Geographic values are PUNO/Puno with the catalog's `EPS EMSAPUNO`. Do not hand-write managed Auth rows or replace the account just to change its display name.
+
+The personalized workspace has seven containers, ten activities, twelve tasks, one retained closed initial record and six scenarios. Visible placeholder markers were removed; initial assumptions use neutral editable-configuration provenance rather than claiming measured evidence. `account-personalization.json` records sanitized counts, never the login or account identifier. `.env.seed.local` contains private expected household/tank/count values for the opt-in test, so verification no longer assumes the original placeholder labels or three-container layout.
+
+### Motion verification
+
+Use `npm run test:e2e -- tests/e2e/motion.spec.ts` for real-frame water movement, unchanged amounts, completion feedback, per-device pause persistence and OS reduced-motion behavior. The main suite exercises those controls on desktop/mobile. The optional private visual inspection is:
+
+```sh
+ASU_RUN_SEED_TESTS=1 ASU_VISUAL_DIRECTORY=/absolute/private/preview npx playwright test --config playwright.account.config.ts --grep "personalized home"
+```
+
+Choose an existing private output directory. This read-only visual pass signs into the retained account, checks actual moving SVG frames and captures home/reserve views; it does not upload household changes. Do not enable credential-bearing traces. Interface motion is a device preference, not part of the account workspace or a service/sensor signal.
+
 ### Form catalog
 
 `form-catalog.json` is a bundled UI reference, not a geographic/service-coverage API or model-support list. It contains 25 department-level jurisdictions, 1,893 historical district entries and 48 utilities. Native selectors/suggestions validate known choices; an explicit not-listed choice retains newer or custom entries. `scripts/import_form_catalog.py` pins the MIT geography source and checks the official historical SUNASS fingerprint before regenerating options. Provenance/license are in `docs/form-catalog-source.json` and `docs/FORM_CATALOG_LICENSE.txt`.

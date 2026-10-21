@@ -21,7 +21,7 @@ export function resolveCloudConfiguration(env: Record<string, unknown>, fallback
 const configuration = resolveCloudConfiguration(import.meta.env);
 export const cloud = configuration ? createClient({ auth: { url: configuration.authUrl, adapter: SupabaseAuthAdapter() }, dataApi: { url: configuration.dataApiUrl } }) : null;
 export type CloudSnapshot = { id: string; revision: number; payload: Workspace };
-export type CloudIdentity = { id: string; email?: string };
+export type CloudIdentity = { id: string; email?: string; name?: string };
 
 export async function authenticateEmail(action: 'signup' | 'signin', fields: { name: string; email: string; password: string }): Promise<'connected' | 'verification-required'> {
   if (!cloud) throw new Error('cloud-unconfigured');

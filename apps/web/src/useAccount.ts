@@ -3,6 +3,7 @@ import type { Workspace } from '../../../packages/domain/src/index';
 import { AccountSync } from './account-sync';
 import { cloud, fetchSnapshot, pushSnapshot, type CloudIdentity } from './cloud';
 import { readAccount, writeAccount } from './storage';
+import { accountIdentity } from './identity';
 
 /** The app, not the Settings route, owns the session and durable upload queue. */
 export function useAccount(guest: Workspace | undefined, online: boolean, ready = true) {
@@ -15,13 +16,13 @@ export function useAccount(guest: Workspace | undefined, online: boolean, ready 
     if (!cloud) return;
     const { data, error } = await cloud.auth.getSession();
     if (error) throw error;
-    await sync.connect(data.session?.user ?? null, guestRef.current);
+    await sync.connect(accountIdentity(data.session?.user ?? null), guestRef.current);
     setChecking(false);
   };
   useEffect(() => {
     if (!cloud || !ready) return;
     let active = true, events = 0;
-    const update = (identity: CloudIdentity | null) => { if (active) { setChecking(false); void sync.connect(identity, guestRef.current); } };
+    const update = (identity: CloudIdentity | null) => { if (active) { setChecking(false); void sync.connect(accountIdentity(identity), guestRef.current); } };
     const { data } = cloud.auth.onAuthStateChange((_event, session) => { events++; update(session?.user ?? null); });
     const generation = events;
     void cloud.auth.getSession().then(({ data, error }) => {

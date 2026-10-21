@@ -20,6 +20,12 @@ The automatic-saving release `e359bd8` completed [CI 39624434994](https://github
 
 Forms now use 25 department choices, 1,893 reference district entries, 48 historical utilities, validated suggestions and Tab completion for unique typed prefixes. Explicit not-listed entry supports catalog gaps. Names/measurements remain user-specific; no values are invented from placeholders. Source snapshots and license are documented separately.
 
+### Puno personalization and interaction motion
+
+The existing managed account was personalized in place, retaining its login and backing up the previous profile/workspace privately. Its PUNO/Puno household uses `EPS EMSAPUNO` and now contains seven containers, ten activities, twelve tasks, one retained closed initial record and six scenarios. Visible placeholder markers were removed while initial assumptions retain editable-configuration provenance. Six operator tests cover valid catalog selection, preservation/idempotence, invalid profile input and failure-safe private-login updates; `account-personalization.json` records the actual database operation.
+
+The UI now renders the managed display name and household location, layered moving water surfaces and transform-based level updates, button/icon feedback and completion/dialog/save responses. Motion can be paused per device, pauses in background tabs and respects system reduced-motion preferences. Four focused desktop/mobile motion cases and the expanded ordinary browser suite pass locally; public verification is recorded after the remote pipeline completes. Private seeded-account checks use the current personalized expectations instead of hard-coded initial names.
+
 | Area | Evidence |
 |---|---|
 | TypeScript | `npm run typecheck` passed. |
