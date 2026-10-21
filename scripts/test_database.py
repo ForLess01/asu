@@ -1,7 +1,7 @@
 """Run real SQL/RLS tests in an isolated temporary PostgreSQL cluster.
 
-This verifies database behavior with a small auth.uid compatibility fixture.
-It does not test hosted Supabase OAuth or claim deployed synchronization.
+This verifies database behavior with a provider-specific local Auth fixture.
+It does not test hosted Supabase/Neon Auth, JWT verification or deployed sync.
 """
 
 import argparse
@@ -18,6 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--provider', choices=('supabase', 'neon'), default='supabase',
+                        help='local migration and Auth fixture provider (default: supabase)')
     parser.add_argument('--evidence', type=Path)
     args = parser.parse_args()
     for executable in ('initdb', 'pg_ctl', 'psql'):
@@ -36,7 +38,8 @@ def main():
         connection = f'postgresql://postgres@127.0.0.1:{port}/postgres'
         results = []
         try:
-            files = [ROOT/'supabase/tests/auth_fixture.sql', ROOT/'supabase/migrations/20261020000100_household_workspaces.sql', ROOT/'supabase/tests/workspace_isolation.sql']
+            provider = ROOT/args.provider
+            files = [provider/'tests/auth_fixture.sql', provider/'migrations/20261020000100_household_workspaces.sql', provider/'tests/workspace_isolation.sql']
             for file in files:
                 run = subprocess.run(['psql', '-X', '-v', 'ON_ERROR_STOP=1', connection, '-f', str(file)], capture_output=True, text=True, timeout=90)
                 notices = [line.partition('NOTICE:')[2].strip() for line in run.stderr.splitlines() if 'PASS:' in line]
@@ -45,7 +48,7 @@ def main():
                 if run.returncode:
                     print(run.stderr)
                     raise SystemExit(run.returncode)
-            evidence = {'status': 'passed', 'executed_at': datetime.now(timezone.utc).isoformat(), 'engine': subprocess.check_output(['psql', '--version'], text=True).strip(), 'scope': 'Isolated PostgreSQL with test auth.uid fixture; not hosted Supabase OAuth', 'results': results, 'assertions': sum(r['passed_assertions'] for r in results)}
+            evidence = {'status': 'passed', 'provider': args.provider, 'executed_at': datetime.now(timezone.utc).isoformat(), 'engine': subprocess.check_output(['psql', '--version'], text=True).strip(), 'scope': f'Isolated PostgreSQL with local {args.provider} Auth fixture; not hosted Auth, JWT verification or Data API', 'results': results, 'assertions': sum(r['passed_assertions'] for r in results)}
             if args.evidence:
                 args.evidence.parent.mkdir(parents=True, exist_ok=True)
                 args.evidence.write_text(json.dumps(evidence, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')

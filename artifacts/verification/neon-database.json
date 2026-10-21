@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "provider": "neon",
+  "executed_at": "2026-10-21T11:14:19.270321+00:00",
+  "engine": "psql (PostgreSQL) 16.15 (Homebrew)",
+  "scope": "Isolated PostgreSQL with local neon Auth fixture; not hosted Auth, JWT verification or Data API",
+  "results": [
+    {
+      "file": "neon/tests/auth_fixture.sql",
+      "exit_code": 0,
+      "passed_assertions": 0
+    },
+    {
+      "file": "neon/migrations/20261020000100_household_workspaces.sql",
+      "exit_code": 0,
+      "passed_assertions": 0
+    },
+    {
+      "file": "neon/tests/workspace_isolation.sql",
+      "exit_code": 0,
+      "passed_assertions": 146
+    }
+  ],
+  "assertions": 146
+}

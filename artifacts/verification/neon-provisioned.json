@@ -1,0 +1,28 @@
+{
+  "status": "verified",
+  "checked_at": "2026-10-21T11:14:24.001294+00:00",
+  "provider": "neon",
+  "project_id": "green-snow-30498948",
+  "organization_plan": "free",
+  "region": "aws-us-east-1",
+  "database": "asu",
+  "compute_min_cu_reported": 0.25,
+  "compute_max_cu_reported": 0.25,
+  "suspend_timeout_seconds_reported": 0,
+  "scale_to_zero_note": "Free-plan policy is documented by Neon; suspend timing was not independently measured",
+  "auth_provider": "managed_better_auth",
+  "auth_url": "https://ep-plain-firefly-b7y8plrb.neonauth.c-13.us-east-1.aws.neon.tech/asu/auth",
+  "data_api_url": "https://ep-plain-firefly-b7y8plrb.apirest.c-13.us-east-1.aws.neon.tech/asu/rest/v1",
+  "migration_applied": true,
+  "aggregate_database_observations": {
+    "remaining_auth_users": 0,
+    "remaining_workspaces": 0,
+    "rls_enabled": true,
+    "policy_count": 2,
+    "rpc_authenticated_only": true
+  },
+  "cleanup_rows_independently_observed_empty": true,
+  "interactive_google_login_verified": false,
+  "public_web_deployment_verified": false,
+  "credentials_included": false
+}

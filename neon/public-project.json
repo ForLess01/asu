@@ -1,0 +1,17 @@
+{
+  "provider": "neon",
+  "organization_id": "org-spring-star-72119715",
+  "organization_plan": "free",
+  "project_id": "green-snow-30498948",
+  "project_name": "asu",
+  "branch_id": "br-royal-bread-b7dv6ts9",
+  "branch_name": "main",
+  "database": "asu",
+  "database_role": "asu_owner",
+  "auth_url": "https://ep-plain-firefly-b7y8plrb.neonauth.c-13.us-east-1.aws.neon.tech/asu/auth",
+  "data_api_url": "https://ep-plain-firefly-b7y8plrb.apirest.c-13.us-east-1.aws.neon.tech/asu/rest/v1",
+  "region": "aws-us-east-1",
+  "created_or_verified_at": "2026-10-21T10:09:06.398781+00:00",
+  "action": "created",
+  "credentials_included": false
+}

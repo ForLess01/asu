@@ -16,7 +16,7 @@ def main():
     commands = [
         ('TypeScript', ['npm', 'run', 'typecheck']),
         ('Domain, browser-model integrity and 10000-vector Node parity', ['npm', 'test']),
-        ('ML, SQL static guardrails and delivery checks', [sys.executable, '-m', 'pytest', '-q', '-p', 'no:cacheprovider', 'ml/tests', 'supabase/tests/test_schema.py', 'scripts/tests']),
+        ('ML, SQL static guardrails and delivery checks', [sys.executable, '-m', 'pytest', '-q', '-p', 'no:cacheprovider', 'ml/tests', 'supabase/tests/test_schema.py', 'neon/tests', 'scripts/tests']),
         ('Desktop and mobile user flows', ['npm', 'run', 'test:e2e']),
         ('Production-promotion rejection preserving active model', [sys.executable, 'scripts/check_promotion_gate.py', '--candidate', 'artifacts/current', '--champion', 'apps/web/public/models/current']),
     ]
@@ -41,7 +41,11 @@ def main():
     database = destination/'database.json'
     if database.exists():
         evidence['database'] = json.loads(database.read_text())
-    evidence['limitations'] = ['No hosted OAuth/PostgREST/cross-device integration has been verified', 'Database checks use isolated PostgreSQL with an Auth compatibility fixture', 'Service-worker coherence checks exercise logic; a packaged production PWA is not verified', 'No remote GitHub workflow run or public deployment is claimed', 'Reported-duration model is experimental, label_semantics_approved=false']
+    for name in ('neon-database', 'neon-hosted', 'neon-hosted-loopback', 'neon-hosted-local-app', 'neon-provisioned'):
+        path = destination/f'{name}.json'
+        if path.exists():
+            evidence[name] = json.loads(path.read_text())
+    evidence['limitations'] = ['Hosted Neon email/password Auth and synchronization are verified in separate opt-in receipts; interactive Google OAuth is not', 'Local database checks use isolated PostgreSQL with an Auth compatibility fixture', 'Service-worker coherence checks exercise logic; a packaged production PWA is not verified', 'Remote workflows are budget-gated and skipped; no executed remote tests or public deployment is claimed', 'Reported-duration model is experimental, label_semantics_approved=false']
     (destination/'test-evidence.json').write_text(json.dumps(evidence, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     print(json.dumps(evidence, ensure_ascii=False, indent=2))
 

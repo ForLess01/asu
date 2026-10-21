@@ -1,0 +1,7 @@
+{
+  "provider": "neon",
+  "version": 1,
+  "enabled": true,
+  "authUrl": "https://ep-plain-firefly-b7y8plrb.neonauth.c-13.us-east-1.aws.neon.tech/asu/auth",
+  "dataApiUrl": "https://ep-plain-firefly-b7y8plrb.apirest.c-13.us-east-1.aws.neon.tech/asu/rest/v1"
+}

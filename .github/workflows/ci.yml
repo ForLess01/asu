@@ -31,7 +31,7 @@ jobs:
       - run: python -m pip install -r ml/requirements.txt
       - run: npm run typecheck
       - run: npm test
-      - run: python -m pytest -q -p no:cacheprovider ml/tests supabase/tests/test_schema.py scripts/tests
+      - run: python -m pytest -q -p no:cacheprovider ml/tests supabase/tests/test_schema.py neon/tests scripts/tests
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
       - name: Preserve browser failure traces only
@@ -57,10 +57,15 @@ jobs:
           --health-timeout 5s --health-retries 12
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - name: Execute real SQL isolation checks against disposable PostgreSQL
+      - name: Execute both provider contracts in separate disposable databases
         env:
           PGPASSWORD: local-test-only
         run: |
-          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -f supabase/tests/auth_fixture.sql
-          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -f supabase/migrations/20261020000100_household_workspaces.sql
-          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -f supabase/tests/workspace_isolation.sql
+          createdb -h 127.0.0.1 -U postgres asu_legacy
+          createdb -h 127.0.0.1 -U postgres asu_neon
+          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d asu_legacy -f supabase/tests/auth_fixture.sql
+          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d asu_legacy -f supabase/migrations/20261020000100_household_workspaces.sql
+          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d asu_legacy -f supabase/tests/workspace_isolation.sql
+          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d asu_neon -f neon/tests/auth_fixture.sql
+          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d asu_neon -f neon/migrations/20261020000100_household_workspaces.sql
+          psql -X -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d asu_neon -f neon/tests/workspace_isolation.sql

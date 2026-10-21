@@ -11,7 +11,9 @@ Asu runs locally as a guest-first React application. It separates household wate
 | `npm run dev -- --host 127.0.0.1 --port 5174` | Use a separate port when another application owns 5173. |
 | `npm test` | Domain, schema, mock cloud adapter, and actual 10,000-vector Python/Node parity tests. |
 | `npm run typecheck` | TypeScript validation without emission. |
-| `npm run test:e2e` | Chromium desktop and 375px mobile flows against an isolated Vite server on 5174. |
+| `npm run test:e2e` | Chromium desktop and 375px mobile flows against an isolated Vite server on 5184. Guest tests explicitly disable cloud; authentication UI tests mock its boundary. |
+| `npm test -- apps/web/src/cloud.test.ts` | Focused Neon configuration, authentication-adapter and versioned snapshot tests, without network access. |
+| `npm run test:e2e -- tests/e2e/cloud-auth.spec.ts` | Mocked authentication, validation, credential exclusion, logout, offline and example-isolation UI checks on 5184. No hosted users are created. |
 | `npm run test:e2e -- --config playwright.capture.config.ts` | Capture the five report screenshots on 5174, with explicit example labels, viewport/UTC metadata, contrast, focus, and overflow checks. |
 
 No application build, deployment, commit, or push is needed for these checks. Browser tests do not reuse an unrelated running server.
@@ -36,9 +38,15 @@ Settings supports Spanish/English, JSON export and validated restoration, and co
 - Levels do not automatically decrease as time passes. The timeline is a labeled constant-demand calculation, not a sensor reading.
 - Due-task and stale-measurement warnings refresh every 30 seconds while visible and immediately on visibility revalidation after a suspended tab resumes. This clock only refreshes the interface; it does not change stored measurements, task completion, or snapshot revisions.
 
-## Optional cloud contract — configuration blocked until provisioned
+## Optional cloud contract — Neon Auth and Data API
 
-Guest use needs no environment variables. `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` enable the optional adapter; never provide a service-role key. The unconfigured UI says local-only. Real OAuth, RLS isolation, and cross-device recovery still require a provisioned service and authorized integration tests; mock adapter tests are not evidence of live synchronization.
+Guest use needs no account or environment variables. `apps/web/src/cloud-public.json` contains only the public provider/version, enabled flag, and actual provisioned Neon Auth/Data API URLs. It enables optional account connection by default, not automatic household uploads. The pinned browser SDK is `@neondatabase/neon-js` **0.8.0-beta**. Its `SupabaseAuthAdapter()` is a Neon Auth compatibility adapter, not a remaining Supabase service or direct `@supabase/supabase-js` dependency.
+
+An explicit pair of `VITE_NEON_AUTH_URL` and `VITE_NEON_DATA_API_URL` overrides the public configuration. If either override is present, both must be valid HTTPS URLs without embedded credentials, query parameters or fragments; a partial or blank pair disables cloud rather than mixing projects or silently falling back. With no override, setting the public JSON's `enabled` to false disables cloud. Legacy `VITE_SUPABASE_*` variables are not used. The unconfigured UI says local-only. Never place a database connection string, database password, API key or owner/service-role credential in browser configuration. Data API requests use the SDK's session-derived JWT, and server-side authorization owns identity and row isolation; the browser never supplies an owner ID.
+
+Settings offers optional email/password sign-up and sign-in in Spanish and English. Sign-up includes an account name. Passwords remain in the mounted form/request only and are cleared on submission; account identity is not part of workspace exports or uploads. A session is required before showing an account as connected. Email verification or an unconfirmed post-signup session remains visibly pending and does not claim registration, delivery of a verification message, or synchronization. Google remains optional and requires provider configuration; its errors are shown, and a redirect is not a connected-session or sync claim. Logout checks the service response before clearing account UI and leaves local household data intact. Local reset does not delete a hosted account or remote snapshot.
+
+The beta SDK preserves `getSession()` → `{ data: { session }, error }`, `onAuthStateChange()` → `{ data: { subscription } }`, and PostgREST `from()`/`rpc()` calls. The beta Google compatibility method discards a returned Better Auth error, so the frontend uses its public `getBetterAuthInstance().signIn.social()` API and validates the result before redirecting. A signup requiring verification can surface `session_not_found`; it is treated as an unconfirmed session, never success. Dependency installation currently reports transitive Better Auth peer-version and React Email deprecation warnings; the lockfile records the resolved tree.
 
 The application uploads its validated current `Workspace` shape, not an older hypothetical schema: `schema_version`, `id`, `revision`, `locale`, `updatedAt`, `household`, `containers`, `activities`, `incidents`, `tasks`, and `scenarios`. Unknown top-level fields, authentication credentials, and device caches are excluded by the shared parser.
 
@@ -51,7 +59,11 @@ Expected service interface from the integration contract:
 - Synchronization is manual and explicit. A remote fetch precedes a choice to upload or restore. One account supports one household; member sharing is not implemented.
 - Disconnect preserves local guest data. Reset affects only the current local workspace, not remote copies or the other example/guest record.
 
-Verify RPC argument names/return shape against the deployed migration before enabling cloud use. No cloud service was created by the frontend work.
+The remote version must be fetched before upload/restore choices appear. A failed sync invalidates that choice and requires fetching again. Auth changes invalidate fetched snapshots, and late responses from a previous authentication generation are ignored. The frontend does not automatically merge, retry writes, or upload example data.
+
+Provisioning and hosted verification are separate from the mocked frontend checks. The dedicated Free Neon project has now been provisioned and the native migration applied. Opt-in real-browser receipts under `artifacts/verification/neon-hosted*.json` pass 32 checks at each of `localhost:5186`, `127.0.0.1:5186` and the actual app at `127.0.0.1:5174`: email signup/sign-in, reload, JWT-backed RPC, tenant isolation, second-device recovery, stale revisions and logout. Disposable users are removed; `neon-provisioned.json` independently observes zero remaining users/workspaces after testing. These checks do not establish interactive Google login, public frontend deployment or a different origin's allowlisting.
+
+The standard browser suite explicitly supplies blank Neon overrides to preserve deterministic local-only guest flows; it does not reuse running servers on 5173/5174. Hosted tests are separate, require `ASU_RUN_HOSTED_TESTS=1`, and disable traces, videos, screenshots and failure DOM snapshots while credentials are present. See `docs/OPERATIONS.md` for exact commands. Report screenshots use a separate capture configuration.
 
 ## Experimental model boundary
 

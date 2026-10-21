@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@fontsource/montserrat": "5.2.6",
-    "@supabase/supabase-js": "2.95.3",
+    "@neondatabase/neon-js": "0.8.0-beta",
     "lucide-react": "0.563.0",
     "react": "19.2.0", "react-dom": "19.2.0", "zod": "4.3.6"
   },
