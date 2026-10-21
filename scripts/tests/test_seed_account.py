@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -41,3 +42,24 @@ def test_seed_cli_requires_opt_in_before_any_provider_operation():
     result = subprocess.run([sys.executable, str(ROOT/'scripts/seed_demo_account.py')], capture_output=True, text=True, timeout=10)
     assert result.returncode != 0
     assert '--allow-create' in result.stderr
+
+
+def test_uncertain_signup_keeps_private_credentials_for_owner_recovery(tmp_path, monkeypatch):
+    seed = module()
+    (tmp_path/'neon').mkdir()
+    (tmp_path/'neon/public-project.json').write_text(json.dumps({
+        'project_id': 'green-snow-30498948', 'database': 'asu', 'organization_id': 'test-free-org',
+        'auth_url': 'https://auth.example.invalid', 'branch_id': 'test-branch',
+    }))
+    monkeypatch.setattr(seed, 'ROOT', tmp_path)
+    monkeypatch.setattr(sys, 'argv', ['seed', '--allow-create'])
+    monkeypatch.setattr(seed, 'cli', lambda *_args, **_kwargs: [{'id': 'test-free-org', 'plan': 'free'}])
+    monkeypatch.setattr(seed.subprocess, 'run', lambda *_args, **_kwargs: SimpleNamespace(returncode=0))
+    def disconnected(*_args, **_kwargs):
+        raise TimeoutError('response lost after a possibly committed signup')
+    monkeypatch.setattr(seed.urllib.request, 'urlopen', disconnected)
+    with pytest.raises(SystemExit, match='credentials retained'):
+        seed.main()
+    private = tmp_path/'.env.seed.local'
+    assert private.exists() and private.stat().st_mode & 0o777 == 0o600
+    assert 'ASU_SEED_PASSWORD=' in private.read_text()

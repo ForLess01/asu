@@ -97,7 +97,9 @@ def main():
         (ROOT/'artifacts/verification/seed-account.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2)+'\n')
         print(json.dumps(receipt, ensure_ascii=False))
     except Exception:
-        cleaned = created is None or cli('neon-auth', 'user', 'delete', created, '--project-id', project['project_id'], '--branch', project['branch_id'], allow_failure=True, allow_text=True) is not None
+        # A lost signup response can still mean the server created the account.
+        # Without its confirmed UUID, retain the private login for owner recovery.
+        cleaned = created is not None and cli('neon-auth', 'user', 'delete', created, '--project-id', project['project_id'], '--branch', project['branch_id'], allow_failure=True, allow_text=True) is not None
         if cleaned:
             destination.unlink()
         raise SystemExit('Seed operation failed; raw credential-bearing responses suppressed. '+('New-account cleanup completed.' if cleaned else 'Cleanup unconfirmed; credentials retained locally for owner recovery.')) from None
