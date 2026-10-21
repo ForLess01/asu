@@ -1,0 +1,19 @@
+{
+  "status": "personalized",
+  "observed_at": "2026-10-21T16:09:23.868639+00:00",
+  "department": "PUNO",
+  "district": "Puno",
+  "utility": "EPS EMSAPUNO",
+  "counts": {
+    "containers": 7,
+    "activities": 10,
+    "tasks": 12,
+    "incidents": 1,
+    "scenarios": 6
+  },
+  "existing_values_preserved": true,
+  "managed_profile_updated": true,
+  "private_backup_created": true,
+  "login_unchanged": true,
+  "credentials_or_account_identifiers_included": false
+}
