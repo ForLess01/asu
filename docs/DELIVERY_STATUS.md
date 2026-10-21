@@ -18,7 +18,7 @@ This file distinguishes delivered code and local observations from unexecuted re
 | Gate behavior | Actual-restoration promotion is rejected and active model bytes are preserved. |
 | Source maintenance | Existing source check returned no-op; changed/corrupt batches and state preservation have tests. |
 | Visual evidence | Five actual desktop/mobile screenshots with fictional example data visibly labelled. |
-| Academic report | 26 pages, Montserrat embedded, 18 figures including all five screenshots; no overflow or private home paths. |
+| Academic report | Current publication edition: 27 pages, Montserrat embedded, all five screenshots and publication receipt; no overflow or private home paths. |
 
 Machine-readable integrated evidence: `artifacts/verification/test-evidence.json` and `database.json`. Scientific run evidence is immutable under `artifacts/current/`. A later test run may update integration evidence; it does not rewrite historical model metrics.
 
@@ -48,9 +48,13 @@ All application/ML/infrastructure code is inside the `asu` repository. The repor
 
 The owner authorized the initial implementation commit and push to the private `ForLess01/asu` repository. Git history and the remote branch determine the published revision; the external academic report remains outside Git.
 
+The first implementation is published on `main` as [`3977314`](https://github.com/ForLess01/asu/commit/3977314a0a884f9a21be9c936f46851c14bdff0a), pushed on 2026-10-21 at 09:39:49 UTC. The local and remote implementation hashes were checked for equality. This receipt is a code-publication event, not a web deployment.
+
 Every hosted workflow job is guarded by `ASU_HOSTED_JOBS_ENABLED == 'true'`. The repository variable is initially `false`: the current credential cannot inspect account-wide billing usage or a zero-spend budget. An initial push may register a workflow whose jobs are all skipped. That is **not remote test execution**, even if GitHub displays a successful/skipped overall conclusion. Local verification above remains the actual test evidence until hosted jobs are explicitly enabled after quota review.
 
 The additional cost-guard regression suite passed four workflow tests. It checks every hosted job, including manual training and deployment, and does not change the immutable scientific run or the earlier integrated test receipt.
+
+Initial [CI run `39578705150`](https://github.com/ForLess01/asu/actions/runs/39578705150) completed with conclusion `skipped`. REST inspection showed `verify` and `database` both skipped, zero steps, and no assigned runner. No remotely executed tests or successful production release are inferred from this run. The external report preserves that exact distinction.
 
 ## Short path for the next maintainer
 

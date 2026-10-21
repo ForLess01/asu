@@ -66,4 +66,4 @@ The current exploratory run keeps all positive eligible reported durations, incl
 
 ## Academic report
 
-The **26-page Montserrat LaTeX report** is outside this repository, at `../informes/asu/output/asu_report.pdf` in the surrounding workspace. Its editable sources, five actual app screenshots and reproducible import scripts are in `../informes/asu/`. Code and sanitized metric/figure exports belong here; report LaTeX/PDF and auxiliary files do not.
+The **Montserrat LaTeX report** is outside this repository, at `../informes/asu/output/asu_report.pdf` in the surrounding workspace. Its editable sources, five actual app screenshots and reproducible import scripts are in `../informes/asu/`. Code and sanitized metric/figure exports belong here; report LaTeX/PDF and auxiliary files do not. The current publication edition has 27 pages, including the first GitHub commit and the explicitly skipped CI receipt.
