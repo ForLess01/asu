@@ -10,6 +10,14 @@ The public release then passed 18 real Chromium checks: compiled entry, desktop/
 
 ## Delivered and exercised
 
+### Automatic account saving and controlled forms
+
+Account saving now belongs to the app rather than the Settings route. Local edits upload automatically with the fetched server revision; account backups/dirty metadata are atomic and separate from guest/example data. Offline changes resume after reconciliation, revision conflicts require an explicit choice, and late requests cannot use another account's JWT. Global desktop/mobile labels reflect actual account/save state.
+
+The persistent seed account is created and directly seeded in the dedicated Neon database. The live seed test passed 11 local-browser/real-service checks, including automatic hydration, saving, offline/reconnect and second-device recovery; the updated disposable isolation suite also passed. Private credentials remain only in `.env.seed.local`, outside Git. `seed-account.json`, `autosync-local.json` and `neon-autosync-hosted-loopback.json` record this checkpoint; production verification is recorded separately after remote deployment.
+
+Forms now use 25 department choices, 1,893 reference district entries, 48 historical utilities, validated suggestions and Tab completion for unique typed prefixes. Explicit not-listed entry supports catalog gaps. Names/measurements remain user-specific; no values are invented from placeholders. Source snapshots and license are documented separately.
+
 | Area | Evidence |
 |---|---|
 | TypeScript | `npm run typecheck` passed. |

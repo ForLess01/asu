@@ -1,0 +1,15 @@
+{
+  "status": "created_and_seeded",
+  "observed_at": "2026-10-21T13:29:37.543264+00:00",
+  "project_id": "green-snow-30498948",
+  "auth_creation": "Managed Auth signup; never a hand-written credential hash",
+  "workspace_write": "Direct PostgreSQL insert with native table validation and owner FK",
+  "containers": 3,
+  "activities": 3,
+  "tasks": 3,
+  "incidents": 1,
+  "scenarios": 2,
+  "synthetic_data_labelled": true,
+  "credentials_file": ".env.seed.local (ignored, mode 0600)",
+  "credentials_or_account_identifiers_included": false
+}

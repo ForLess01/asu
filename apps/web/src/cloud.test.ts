@@ -9,9 +9,21 @@ beforeEach(() => {
   vi.stubEnv('VITE_NEON_AUTH_URL', 'https://auth.example.com/asu/auth');
   vi.stubEnv('VITE_NEON_DATA_API_URL', 'https://data.example.com/asu/rest/v1');
 });
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 
 describe('optional versioned snapshot adapter (mock service, not a live-cloud claim)', () => {
+  it('binds automatic writes to the captured account token and rejects another identity', async () => {
+    const fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => [{ id: crypto.randomUUID(), revision: 1 }] });
+    vi.stubGlobal('fetch', fetch);
+    client.auth.getSession.mockResolvedValue({ data: { session: { user: { id: 'account-a' }, access_token: 'fictional-account-a-token' } }, error: null });
+    const { pushSnapshot } = await import('./cloud');
+    await pushSnapshot(emptyWorkspace(), null, 'account-a');
+    expect(fetch.mock.calls[0][1].headers.Authorization).toBe('Bearer fictional-account-a-token');
+    expect(fetch.mock.calls[0][1].credentials).toBe('omit');
+    expect(fetch.mock.calls[0][1].redirect).toBe('error');
+    await expect(pushSnapshot(emptyWorkspace(), null, 'account-b')).rejects.toThrow('auth-session-changed');
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
   it('initializes Neon with the compatibility adapter and public URLs, without browser API keys', async () => {
     await import('./cloud');
     expect(sdk.createClient).toHaveBeenCalledExactlyOnceWith({ auth: { url: 'https://auth.example.com/asu/auth', adapter: 'neon-auth-adapter' }, dataApi: { url: 'https://data.example.com/asu/rest/v1' } });

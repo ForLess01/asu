@@ -50,21 +50,41 @@ export async function googleSignInUrl(callbackURL: string): Promise<string> {
   return data.url;
 }
 
-export async function fetchSnapshot(): Promise<CloudSnapshot | null> {
+async function accountRequest(path: string, identity: string, body?: unknown): Promise<unknown> {
+  if (!cloud || !configuration) throw new Error('cloud-unconfigured');
+  const { data, error } = await cloud.auth.getSession();
+  const session = data.session;
+  if (error || session?.user.id !== identity || !session.access_token) throw new Error('auth-session-changed');
+  // A captured JWT prevents an in-flight account A queue from using account B's later session.
+  const response = await fetch(`${configuration.dataApiUrl}/${path}`, {
+    method: body === undefined ? 'GET' : 'POST', cache: 'no-store', credentials: 'omit', redirect: 'error',
+    headers: { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+  });
+  const value = await response.json();
+  if (!response.ok) throw Object.assign(new Error('cloud-request-failed'), { code: value?.code });
+  return value;
+}
+
+export async function fetchSnapshot(identity?: string): Promise<CloudSnapshot | null> {
   if (!cloud) throw new Error('cloud-unconfigured');
-  const { data, error } = await cloud.from('household_workspaces').select('id,revision,payload').limit(1).maybeSingle();
+  const { data, error } = identity
+    ? { data: (await accountRequest('household_workspaces?select=id,revision,payload&limit=1', identity) as CloudSnapshot[])[0] ?? null, error: null }
+    : await cloud.from('household_workspaces').select('id,revision,payload').limit(1).maybeSingle();
   if (error) throw error;
   return data ? { id: data.id, revision: data.revision, payload: parseWorkspace(JSON.stringify(data.payload)) } : null;
 }
 
-export async function pushSnapshot(state: Workspace, snapshot: CloudSnapshot | null): Promise<CloudSnapshot> {
+export async function pushSnapshot(state: Workspace, snapshot: (Pick<CloudSnapshot, 'id' | 'revision'> & { payload?: Workspace }) | null, identity?: string): Promise<CloudSnapshot> {
   if (!cloud) throw new Error('cloud-unconfigured');
   const payload = parseWorkspace(JSON.stringify(state));
-  const { data, error } = await cloud.rpc('update_workspace', {
+  const arguments_ = {
     p_workspace_id: snapshot?.id ?? state.id,
     p_payload: payload,
     p_expected_revision: snapshot?.revision ?? 0,
-  });
+  };
+  const { data, error } = identity ? { data: await accountRequest('rpc/update_workspace', identity, arguments_), error: null }
+    : await cloud.rpc('update_workspace', arguments_);
   if (error) throw error;
   const result = Array.isArray(data) ? data[0] : data;
   if (!result || typeof result.revision !== 'number') throw new Error('invalid-sync-response');

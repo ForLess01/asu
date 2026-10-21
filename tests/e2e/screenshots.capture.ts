@@ -55,7 +55,8 @@ test('capture actual report screenshots on isolated Asu dev server', async ({ pa
   await page.getByRole('button', { name: 'Registrar un corte', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('Inicio del corte · hora de Lima').fill(new Date(Date.now() - 7 * 3600000).toISOString().slice(0, 16));
-  await dialog.getByLabel('Fuente de la información').fill('Demostración · observación ficticia, no evento real');
+  await dialog.getByLabel('Fuente de la información').selectOption('__custom__');
+  await dialog.getByLabel('Detalle de la fuente').fill('Demostración · observación ficticia, no evento real');
   await dialog.getByRole('button', { name: 'Registrar corte', exact: true }).click();
   await expect(dialog).not.toBeVisible();
   await page.getByRole('button', { name: 'Ya volvió el agua' }).click();

@@ -26,7 +26,8 @@ Open `http://127.0.0.1:5174`. No account, API key or environment variable is nee
 - Local incidents, observed household restoration, corrections, history and due-task reminders while the app is open.
 - Spanish/English interface, JSON export/validated restore, confirmed reset and IndexedDB revision conflict handling.
 - Experimental model inference in a Web Worker, with supported EPS/department pairs, source dates, integrity-checked evidence and explicit abstentions.
-- Optional email sign-up/sign-in, checked Google redirect helper, Neon-owned Postgres RPC and manual version-controlled synchronization. Email authentication, ownership isolation and second-device recovery have live hosted evidence; interactive Google login remains pending.
+- Optional email sign-up/sign-in and automatic Neon saving, account-isolated offline backups, cross-device recovery and explicit revision-conflict resolution. Visible status distinguishes guest/local, pending/offline and server-confirmed cloud saves; interactive Google login remains pending.
+- Department selectors, district/EPS reference suggestions, validated choices and unique-prefix Tab completion. Custom names stay editable; suggestions never invent measurements.
 
 No live official feed, background push, sensor reading, water-potability certification or household savings claim is fabricated.
 
@@ -41,6 +42,8 @@ python3 scripts/test_database.py --evidence artifacts/verification/database.json
 Current commands generate exact local test counts in `artifacts/verification/test-evidence.json`. The Neon migration has **146 SQL assertions** and **32 live browser/Auth/Data API checks per supported tested local origin**, recorded separately from mock tests. The first executed remote CI passed **44 JS, 121 Python and 26 E2E tests**, plus **278 SQL assertions** across both provider contracts. The [public release receipt](artifacts/verification/deployment-evidence.json) records actual runs and 18 production-browser checks. Python/Node predictions match on **10,000 vectors** to a maximum error of `1.42e-14` hours. See [delivery status](docs/DELIVERY_STATUS.md) for scope and limitations.
 
 ## Start here
+
+The requested persistent demonstration account has real seed data in Neon. Its login is stored locally in **`.env.seed.local`** (Git-ignored, private permissions), not in this repository or the browser bundle. See [operations](docs/OPERATIONS.md#seeded-account-and-automatic-save-verification) for verification commands and seed-data scope.
 
 - [Implementation plan](PLAN_IMPLEMENTACION.md) — product behavior, UX/UI, data contracts, scientific methodology, architecture, zero-cost deployment constraints, CI/CD, retraining, tests and academic-report specification.
 - [Product behavior and evidence](PRODUCT.md), [operations](docs/OPERATIONS.md) and [Neon setup](docs/NEON.md).

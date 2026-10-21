@@ -41,7 +41,7 @@ def main():
     database = destination/'database.json'
     if database.exists():
         evidence['database'] = json.loads(database.read_text())
-    for name in ('neon-database', 'neon-hosted', 'neon-hosted-loopback', 'neon-hosted-local-app', 'neon-provisioned'):
+    for name in ('neon-database', 'neon-hosted', 'neon-hosted-loopback', 'neon-hosted-local-app', 'neon-provisioned', 'neon-autosync-hosted-loopback', 'autosync-local', 'autosync-public', 'seed-account'):
         path = destination/f'{name}.json'
         if path.exists():
             evidence[name] = json.loads(path.read_text())

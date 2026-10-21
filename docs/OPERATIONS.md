@@ -18,7 +18,7 @@ Open the printed local URL. Guest state persists in IndexedDB. The separate exam
 
 No registration is required for local use. The checked-in `apps/web/src/cloud-public.json` enables the dedicated Neon Auth/Data API endpoints. Optional Vite overrides are `VITE_NEON_AUTH_URL` and `VITE_NEON_DATA_API_URL`; they are an atomic pair. Two empty overrides explicitly disable cloud in deterministic guest tests. These are HTTPS public endpoints, not a Postgres connection string or server key. Never put database passwords, server secrets or JWTs in public configuration. No real environment file is included.
 
-The active migration is `neon/migrations/20261020000100_household_workspaces.sql`; it has been applied to the dedicated Free Neon project and its Data API schema refreshed. See [NEON.md](NEON.md). The current application supports one owned workspace per account and manual upload/restore with revision conflicts; sharing invitations are not implemented. The legacy `supabase/` directory remains regression coverage, not a second hosted provider.
+The active migration is `neon/migrations/20261020000100_household_workspaces.sql`; it has been applied to the dedicated Free Neon project and its Data API schema refreshed. See [NEON.md](NEON.md). Signed-in accounts now load and save automatically, with per-account durable offline queues and explicit version-conflict resolution. One account owns one workspace; sharing invitations are not implemented. The legacy `supabase/` directory remains regression coverage, not a second hosted provider.
 
 `neon/public-project.json` records only public resource identifiers and endpoints. The organization plan was checked as `free` before provisioning; fixed compute bounds are reported as 0.25/0.25 CU. Managed Better Auth's default email/password configuration does not require email verification in this pilot and sends no signup verification email. Do not treat an unverified email as a basis for granting another household's access. Google is listed as a provider, but an interactive Google sign-in has not been completed by these tests.
 
@@ -37,6 +37,25 @@ python3 scripts/record_neon_status.py
 ```
 
 Hosted tests are not part of ordinary CI: they explicitly create/delete disposable accounts, suppress credential-sensitive captures, and require opt-in. Provisioning/SQL operator helpers use the authenticated Neon CLI; raw connection responses are never printed or persisted. The psql password is passed only in its child environment, never in argv or browser code.
+
+### Seeded account and automatic-save verification
+
+The owner-requested seed account is a persistent managed Auth account. Its workspace was inserted directly into PostgreSQL through native validation/FK constraints, with a visibly fictional household, three containers, three activities, three tasks, one closed fictional incident and two scenarios. `artifacts/verification/seed-account.json` contains only sanitized counts. It is separate from the unconnected local example mode.
+
+Credentials are stored **only** in the Git-ignored `.env.seed.local` file with permissions `0600`. Open that file locally to obtain the login; never copy it into frontend configuration, Git, screenshots or report evidence. `python3 scripts/seed_demo_account.py --allow-create` is the explicit operator creation command and refuses to overwrite that file. Auth creates the password hash; the script never manually fabricates an Auth row.
+
+```sh
+# Uses an isolated local 5186 server and the real Neon service:
+ASU_RUN_SEED_TESTS=1 npx playwright test --config playwright.account.config.ts
+# After the remote CI/deploy completes, verify the actual public app:
+ASU_RUN_SEED_TESTS=1 ASU_ACCOUNT_ORIGIN=https://asu-forless01.pages.dev npx playwright test --config playwright.account.config.ts
+```
+
+These tests retain the seeded account, temporarily change its synthetic tank volume and restore it afterward. They verify automatic remote hydration, saving outside Settings, reload, offline durability, reconnection, a second device and logout isolation. Receipts are `autosync-local.json` and `autosync-public.json`; the old `neon-hosted*.json` files are historical manual-sync evidence, not claims that the old UI still exists. The disposable tenant-isolation suite now writes `neon-autosync-hosted*.json`.
+
+### Form catalog
+
+`form-catalog.json` is a bundled UI reference, not a geographic/service-coverage API or model-support list. It contains 25 department-level jurisdictions, 1,893 historical district entries and 48 utilities. Native selectors/suggestions validate known choices; an explicit not-listed choice retains newer or custom entries. `scripts/import_form_catalog.py` pins the MIT geography source and checks the official historical SUNASS fingerprint before regenerating options. Provenance/license are in `docs/form-catalog-source.json` and `docs/FORM_CATALOG_LICENSE.txt`.
 
 ## Scientific model
 

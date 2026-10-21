@@ -1,0 +1,16 @@
+{
+  "geography_source": "https://raw.githubusercontent.com/jmcastagnetto/ubigeo-peru-aumentado/a783fa66effb16fa8f3321b49a3d5e71cab15a5c/ubigeo_distrito.json",
+  "geography_license": "MIT",
+  "geography_author": "Jesus M. Castagnetto",
+  "geography_sha256": "a3a25a2c6cc775880a8292584d51b784cb372920d54be69ccfa556b48f45f036",
+  "geography_source_period": "2021 snapshot; not a current administrative boundary authority",
+  "utilities_source": "https://www.datosabiertos.gob.pe/sites/default/files/Interrupciones_Dataset.csv",
+  "utilities_sha256": "0798ed3ef4a649b8f4b0c75a37a3799d3694abfcaa7d7524c80cb0ebf04d2a4c",
+  "utilities_attribution": "SUNASS / Plataforma Nacional de Datos Abiertos del Perú",
+  "utilities_license": "ODC-BY",
+  "catalog_sha256": "f70eb916f2b353a536f0f5c42ec75c28118b895be7bbfc8eb72c8efd58998a7b",
+  "department_count": 25,
+  "district_count": 1893,
+  "utility_count": 48,
+  "limitations": "Historical reference options only; not service coverage. Explicit not-listed entry preserves newer districts/providers."
+}

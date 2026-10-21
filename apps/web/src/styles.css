@@ -24,7 +24,8 @@ a:hover { color: var(--ink); }
 :focus-visible { outline: 3px solid #ac6607; outline-offset: 4px; }
 button svg, a svg, .button svg { flex-shrink: 0; }
 input:not([type='checkbox']), select, textarea { display: block; width: 100%; min-width: 0; min-height: 48px; padding: 12px; background: white; border: 1px solid #adc1bc; color: var(--ink); border-radius: 9px; margin-top: 7px; font-size: 16px; }
-input::placeholder { color: #6c7f80; }
+input::placeholder { color: #536b70; }
+.field-error { display: block; color: var(--danger); font-size: 12px; margin-top: 6px; }
 input[type='checkbox'] { width: 21px; height: 21px; min-width: 21px; accent-color: var(--brand); margin: 0; cursor: pointer; }
 label { display: block; font-weight: 500; font-size: 14px; margin: 0 0 var(--space-4); }
 label.check { display: flex; align-items: center; gap: 12px; min-height: 48px; margin: 0; font-size: 14px; cursor: pointer; }
@@ -244,6 +245,12 @@ dd { margin: 0; font-size: 13px; overflow-wrap: anywhere; }
 .account-form form { margin-bottom: 24px; }
 .account-form .form-error { color: var(--danger); }
 .account-identity { margin-top: 12px; overflow-wrap: anywhere; }
+.account-status { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 44px; min-height: 48px; background: var(--positive-bg); font-size: 12px; }
+.account-status a { margin-left: auto; }
+.account-warning { background: var(--warning-bg); color: var(--warning-text); }
+.sync-conflict { padding: 16px; margin: 16px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--warning-bg); }
+.sync-conflict p { font-size: 13px; }
+@media (max-width: 760px) { .account-status { padding: 12px 20px; } }
 .danger-zone { border-color: #e5cece; }
 .danger-zone h2 { color: var(--danger); }
 .lab-warning { display: flex; align-items: flex-start; gap: 16px; background: var(--warning-bg); color: var(--warning-text); padding: 24px; border-radius: 14px; margin-bottom: 24px; }

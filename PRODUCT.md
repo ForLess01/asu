@@ -1,6 +1,6 @@
-# Asu: a household water plan, without an account
+# Asu: household planning with optional automatic cloud saving
 
-Asu runs locally as a guest-first React application. It separates household water planning from an experimental historical model of **reported outage duration**, which is not actual restoration prediction.
+Asu supports a local guest plan and signed-in automatic Neon saving with an account-isolated offline backup. It separates household water planning from an experimental historical model of **reported outage duration**, which is not actual restoration prediction.
 
 ## Run and verify
 
@@ -31,6 +31,7 @@ Settings supports Spanish/English, JSON export and validated restoration, and co
 ## Local storage and recovery
 
 - IndexedDB database `asu-household-v1`, object store `workspaces`; separate `guest` and `example` records.
+- Signed-in backups use `account:<provider-user-id>` records. A workspace, pending flag, server baseline and confirmation time are committed atomically; no password/JWT enters these records or workspace exports.
 - Schema version 1 is validated before restoration and storage. Invalid JSON, unknown versions, duplicate IDs, over-capacity containers, and invalid incident ordering are rejected.
 - One compare-and-swap transaction validates the expected local revision. Cross-tab announcements exclude their own tab sender. Conflicts require a visible reload, not a silent merge.
 - Unreadable stored data is not silently replaced. Recovery requires confirmation. Browser-data deletion/private mode can lose local data; export backups.
@@ -40,7 +41,7 @@ Settings supports Spanish/English, JSON export and validated restoration, and co
 
 ## Optional cloud contract — Neon Auth and Data API
 
-Guest use needs no account or environment variables. `apps/web/src/cloud-public.json` contains only the public provider/version, enabled flag, and actual provisioned Neon Auth/Data API URLs. It enables optional account connection by default, not automatic household uploads. The pinned browser SDK is `@neondatabase/neon-js` **0.8.0-beta**. Its `SupabaseAuthAdapter()` is a Neon Auth compatibility adapter, not a remaining Supabase service or direct `@supabase/supabase-js` dependency.
+Guest use needs no account or environment variables. `apps/web/src/cloud-public.json` contains only the public provider/version, enabled flag, and actual provisioned Neon Auth/Data API URLs. Signing in enables automatic persistence for that account; guest/example edits are not background uploads. The pinned browser SDK is `@neondatabase/neon-js` **0.8.0-beta**. Its `SupabaseAuthAdapter()` is a Neon Auth compatibility adapter, not a remaining Supabase service or direct `@supabase/supabase-js` dependency.
 
 An explicit pair of `VITE_NEON_AUTH_URL` and `VITE_NEON_DATA_API_URL` overrides the public configuration. If either override is present, both must be valid HTTPS URLs without embedded credentials, query parameters or fragments; a partial or blank pair disables cloud rather than mixing projects or silently falling back. With no override, setting the public JSON's `enabled` to false disables cloud. Legacy `VITE_SUPABASE_*` variables are not used. The unconfigured UI says local-only. Never place a database connection string, database password, API key or owner/service-role credential in browser configuration. Data API requests use the SDK's session-derived JWT, and server-side authorization owns identity and row isolation; the browser never supplies an owner ID.
 
@@ -56,14 +57,22 @@ Expected service interface from the integration contract:
 - RPC: `update_workspace(p_workspace_id, p_payload, p_expected_revision)` returns a row/object containing `id` and the new remote `revision` (or an array containing that row).
 - First write expects remote revision 0. Later writes preserve the fetched remote revision; conflict errors are surfaced without retrying a write or merging.
 - Remote revision is separate from `payload.revision`, which represents local changes.
-- Synchronization is manual and explicit. A remote fetch precedes a choice to upload or restore. One account supports one household; member sharing is not implemented.
-- Disconnect preserves local guest data. Reset affects only the current local workspace, not remote copies or the other example/guest record.
+- Signing in fetches the existing account plan automatically. A guest plan is copied into a new account only after the server confirms no remote plan exists; the guest record is retained separately. One account supports one household; member sharing is not implemented.
+- Validated form saves and task actions persist locally first and upload automatically. “Saved in Neon” requires server confirmation. Offline/pending/error/conflict states remain visible throughout the app, including mobile.
+- Reconnection reconciles the durable baseline before uploading; ambiguous lost acknowledgements are checked against actual server data. Generic failures have at most five bounded backoff retries. Revision conflicts never trigger blind overwrites or automatic merges; either copy can be selected explicitly after exporting a backup.
+- Disconnect returns to the separate guest plan and retains the account backup. Clearing an account plan also synchronizes the empty plan to Neon, with explicit confirmation; guest/example reset does not delete cloud data.
 
-The remote version must be fetched before upload/restore choices appear. A failed sync invalidates that choice and requires fetching again. Auth changes invalidate fetched snapshots, and late responses from a previous authentication generation are ignored. The frontend does not automatically merge, retry writes, or upload example data.
+The app owns account state independently of the Settings route. Auth changes invalidate active operations; late responses cannot replace another account's state. Automatic requests capture the expected account's session JWT so queued data cannot inherit a later account's token. Local compare-and-swap and remote revision checks remain separate boundaries. Workspace exports exclude session/queue metadata.
+
+## Controlled fields and suggestions
+
+Department uses a native select. District and EPS use browser-native suggestions, canonical membership validation and Tab completion only for an unambiguous typed prefix. Blank placeholders are never silently converted into personal data. An explicit “not listed” choice supports newer/custom districts or providers. The attributed geography snapshot is from 2021 (25 jurisdictions, 1,893 entries); the 48 utility options come from the fingerprint-verified historical SUNASS CSV. Neither proves current boundaries or service coverage. Sources/license are in `docs/form-catalog-source.json` and `docs/FORM_CATALOG_LICENSE.txt`.
+
+Container/activity names remain user-defined with optional suggestions; water uses and information-source categories are selectors. Source details, household names, task titles, measurements and correction explanations remain editable because they are genuinely user-specific. Suggestions never invent liters, frequencies or observations.
 
 Provisioning and hosted verification are separate from the mocked frontend checks. The dedicated Free Neon project has now been provisioned and the native migration applied. Opt-in real-browser receipts under `artifacts/verification/neon-hosted*.json` pass 32 checks at each of `localhost:5186`, `127.0.0.1:5186` and the actual app at `127.0.0.1:5174`: email signup/sign-in, reload, JWT-backed RPC, tenant isolation, second-device recovery, stale revisions and logout. Disposable users are removed; `neon-provisioned.json` independently observes zero remaining users/workspaces after testing. These checks do not establish interactive Google login, public frontend deployment or a different origin's allowlisting.
 
-The standard browser suite explicitly supplies blank Neon overrides to preserve deterministic local-only guest flows; it does not reuse running servers on 5173/5174. Hosted tests are separate, require `ASU_RUN_HOSTED_TESTS=1`, and disable traces, videos, screenshots and failure DOM snapshots while credentials are present. See `docs/OPERATIONS.md` for exact commands. Report screenshots use a separate capture configuration.
+The standard browser suite explicitly supplies blank Neon overrides to preserve deterministic guest flows; authentication tests mock only the boundary. Hosted tests are separate and opt-in. `playwright.account.config.ts` verifies the persistent seed account locally or on the exact production URL, with no credential-sensitive captures. Historical manual-sync receipts are retained; updated `neon-autosync-hosted*.json` and `autosync-{local,public}.json` record the new behavior separately. See `docs/OPERATIONS.md` for commands.
 
 ## Experimental model boundary
 
