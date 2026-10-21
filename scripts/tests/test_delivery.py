@@ -45,7 +45,7 @@ def test_smoke_binds_published_model_to_release(monkeypatch, capsys, correct_has
     release = {'model_sha256': hashlib.sha256(model).hexdigest() if correct_hash else '0'*64}
     values = {'/': b'<html><title>Asu</title></html>', '/version.json': json.dumps(release).encode(), '/models/current/model.json': model}
     monkeypatch.setenv('ASU_PUBLIC_URL', 'https://example.invalid')
-    monkeypatch.setattr(smoke.urllib.request, 'urlopen', lambda url, timeout: Response(values[url.removeprefix('https://example.invalid')]))
+    monkeypatch.setattr(smoke.urllib.request, 'urlopen', lambda request, timeout: Response(values[request.full_url.removeprefix('https://example.invalid')]))
     if correct_hash:
         smoke.main()
         assert json.loads(capsys.readouterr().out)['status'] == 'passed'
@@ -61,9 +61,28 @@ def test_smoke_rejects_an_old_release_even_when_its_model_hash_matches(monkeypat
     values = {'/': b'<html></html>', '/version.json': json.dumps(release).encode(), '/models/current/model.json': model}
     monkeypatch.setenv('ASU_PUBLIC_URL', 'https://example.invalid')
     monkeypatch.setenv('CODE_REVISION', 'b'*40)
-    monkeypatch.setattr(smoke.urllib.request, 'urlopen', lambda url, timeout: Response(values[url.removeprefix('https://example.invalid')]))
+    monkeypatch.setattr(smoke.urllib.request, 'urlopen', lambda request, timeout: Response(values[request.full_url.removeprefix('https://example.invalid')]))
     with pytest.raises(SystemExit, match='commit mismatch'):
         smoke.main()
+
+
+def test_smoke_identifies_its_requests_to_the_public_edge(monkeypatch, capsys):
+    smoke = module('smoke_deployment')
+    model = b'{"fixture": true}'
+    release = {'model_sha256': hashlib.sha256(model).hexdigest()}
+    values = {'/': b'<html></html>', '/version.json': json.dumps(release).encode(), '/models/current/model.json': model}
+    requests = []
+    def edge(request, timeout):
+        assert isinstance(request, smoke.urllib.request.Request)
+        assert request.get_header('User-agent') == 'Asu-Deployment-Check/1.0'
+        requests.append(request.full_url)
+        return Response(values[request.full_url.removeprefix('https://example.invalid')])
+    monkeypatch.setenv('ASU_PUBLIC_URL', 'https://example.invalid')
+    monkeypatch.delenv('CODE_REVISION', raising=False)
+    monkeypatch.setattr(smoke.urllib.request, 'urlopen', edge)
+    smoke.main()
+    assert json.loads(capsys.readouterr().out)['status'] == 'passed'
+    assert len(requests) == 3
 
 
 def test_production_gate_preserves_all_active_bytes(tmp_path, monkeypatch, capsys):

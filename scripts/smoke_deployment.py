@@ -12,7 +12,9 @@ def main():
     if not base.startswith('https://') or urllib.parse.urlparse(base).hostname is None:
         raise SystemExit('ASU_PUBLIC_URL must be the verified HTTPS Pages URL')
     def get(path):
-        with urllib.request.urlopen(base + path, timeout=30) as response:
+        # The Pages edge rejects the generic Python-urllib user agent (error 1010).
+        request = urllib.request.Request(base + path, headers={'User-Agent': 'Asu-Deployment-Check/1.0'})
+        with urllib.request.urlopen(request, timeout=30) as response:
             if response.status != 200:
                 raise ValueError('Unexpected HTTP status')
             return response.read()

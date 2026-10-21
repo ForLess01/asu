@@ -4,7 +4,9 @@
 
 Implemented: local-first bilingual web application, live Neon email authentication/Data API synchronization, portable experimental reported-duration model, reproducible Python pipeline, Neon SQL migration/RPC, browser and domain tests, and CI/deployment workflow definitions.
 
-Not established: actual-restoration label semantics, prospective prediction validity, interactive Google login, a production frontend deployment, or remotely executed GitHub test jobs. A workflow file is not evidence that the workflow executed. No application build has been run during this work.
+Public application: **https://asu-forless01.pages.dev**. GitHub CI executed successfully and its dependent workflow built/uploaded the app remotely. Independent HTTPS checks bind the public release to its commit/model hash; 18 production-browser checks verify real Neon sessions and cross-device recovery. See `artifacts/verification/deployment-evidence.json`, which also preserves the initial smoke-check failure and its correction. No local application build was used.
+
+Not established: actual-restoration label semantics, prospective prediction validity, interactive Google login or production PWA installation/offline recovery. Successful deployment does not resolve those separate limitations.
 
 ## Local application
 
@@ -74,7 +76,7 @@ Account quota and billing controls remain GitHub account settings. The owner con
 
 ## Public deployment prerequisites
 
-Cloudflare Pages project `asu-forless01` has been created. `deployment/pages-public.json` records its assigned address `https://asu-forless01.pages.dev` with `first_deployment_completed=false`. The address is reserved, not a functioning application. A checked distributable and a successful HTTPS smoke test remain required; uploading raw TypeScript source is not a deployment.
+Cloudflare Pages project `asu-forless01` now serves the checked application. `deployment/pages-public.json` records the first verified release and true publication/verification flags. GitHub performs the build; raw TypeScript and local build output are not uploaded.
 
 Wrangler initially selected a stale cached account and failed authentication. Selecting the account actually returned by `whoami` resolved the mismatch. Project creation then required the CLI's direct Pages creation path because its default delegated to Workers and attempted to detect static output. Only project metadata was created; no bundle was built or deployed. Future commands target the existing Pages project without repeating the creation-only force option.
 
@@ -82,7 +84,7 @@ Review account-level spending controls and shared minutes when changing automati
 
 GitHub variables contain public `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_PAGES_PROJECT`, `ASU_PUBLIC_URL`, `VITE_NEON_AUTH_URL` and `VITE_NEON_DATA_API_URL`. `ASU_PUBLIC_URL` is only an assigned target until deployment passes. The owner installed `CLOUDFLARE_API_TOKEN` as an Actions secret, confirmed by listing its name without reading its value. Local Wrangler OAuth is not copied into GitHub or the application. `ASU_HOSTED_JOBS_ENABLED=true` has been explicitly authorized and verified.
 
-The deployment stamps `version.json` and checks the actual HTTPS URL plus published model SHA-256. An absent URL or mismatch is failure, not a successful deployment. Do not set a pretend URL in the README.
+The deployment stamps `version.json` and checks the actual HTTPS URL, tested commit and published model SHA-256. An absent URL or mismatch is failure. The smoke client identifies itself as `Asu-Deployment-Check/1.0`: the default Python-urllib user agent was rejected by the Pages edge with error 1010 despite a successful upload. The fix retains all integrity checks without weakening edge security settings.
 
 ## Rollback
 

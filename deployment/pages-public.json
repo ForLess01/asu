@@ -4,8 +4,10 @@
   "account_id": "57acd998e295ee223ea27aa6d09decc8",
   "production_branch": "main",
   "assigned_url": "https://asu-forless01.pages.dev",
-  "first_deployment_completed": false,
-  "public_application_verified": false,
-  "note": "Project created directly on Pages. The assigned URL is not evidence of a published application.",
+  "first_deployment_completed": true,
+  "public_application_verified": true,
+  "first_verified_commit": "82da3942cd19a8f11823bb0df08e478bbcc25057",
+  "verified_at": "2026-10-21T12:29:18.691Z",
+  "note": "Built and uploaded by GitHub Actions after successful main CI; HTTPS release/model hash and 18 production browser checks verified independently.",
   "credentials_included": false
 }

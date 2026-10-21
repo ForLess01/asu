@@ -8,7 +8,7 @@ Asu helps households record water reserves, compare consumption and replenishmen
 
 ## Project status
 
-**Functional implementation with live Neon email authentication and synchronization.** The bilingual React application, IndexedDB persistence, model Worker, reproducible training pipeline, Neon migration and CI/CD definitions exist. Real browser tests exercise hosted Neon Auth, JWT/Data API ownership isolation and second-device recovery. Interactive Google login and a public frontend deployment remain unverified. The model predicts historical **reported duration**, not verified actual restoration.
+**Public experimental application: [asu-forless01.pages.dev](https://asu-forless01.pages.dev).** GitHub Actions builds and deploys after successful main CI. Public HTTPS verification and 18 real production-browser checks cover Neon email authentication, plan transfer, second-device recovery and the model Worker. Interactive Google login remains unverified. The model predicts historical **reported duration**, not verified actual restoration.
 
 ## Run locally
 
@@ -38,7 +38,7 @@ python3 scripts/verify_project.py
 python3 scripts/test_database.py --evidence artifacts/verification/database.json
 ```
 
-Current commands generate exact test counts in `artifacts/verification/test-evidence.json`. The Neon migration has **146 SQL assertions** on isolated PostgreSQL 16 and **32 live browser/Auth/Data API checks per supported tested origin**, recorded separately from mock tests. Python/Node predictions match on **10,000 vectors** to a maximum error of `1.42e-14` hours. See [delivery status](docs/DELIVERY_STATUS.md) for scope and limitations. Local tests and hosted Neon tests do not establish remotely executed GitHub CI or a public frontend deployment.
+Current commands generate exact local test counts in `artifacts/verification/test-evidence.json`. The Neon migration has **146 SQL assertions** and **32 live browser/Auth/Data API checks per supported tested local origin**, recorded separately from mock tests. The first executed remote CI passed **44 JS, 121 Python and 26 E2E tests**, plus **278 SQL assertions** across both provider contracts. The [public release receipt](artifacts/verification/deployment-evidence.json) records actual runs and 18 production-browser checks. Python/Node predictions match on **10,000 vectors** to a maximum error of `1.42e-14` hours. See [delivery status](docs/DELIVERY_STATUS.md) for scope and limitations.
 
 ## Start here
 
@@ -52,7 +52,7 @@ Current commands generate exact test counts in `artifacts/verification/test-evid
 
 - Python and scikit-learn for reproducible training and evaluation.
 - Portable quantile GBR model evaluated in the browser with Python/JavaScript parity and whole-bundle checksum tests.
-- React/TypeScript app with a PWA manifest and cache-coherence logic; production packaging/install behavior remains unverified.
+- React/TypeScript app built remotely and verified on public HTTPS, with a PWA manifest and cache-coherence logic; installation/offline recovery remains unverified.
 - Neon Free project with Managed Better Auth, JWT-validated Data API and row-level owner isolation. Legacy Supabase SQL remains only as a regression fixture/reference.
 - Five scientific/technical layers: raw provenance, event-level validation, chronological evaluation/calibration, immutable evidence and controlled publication. GitHub Actions definitions cover CI, training, maintenance and Pages deployment after successful trusted-main CI. The remote job builds and publishes the exact tested commit; local build output is not uploaded.
 

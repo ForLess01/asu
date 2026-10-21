@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-21T12:29:18.691Z",
+  "status": "public_application_verified",
+  "url": "https://asu-forless01.pages.dev",
+  "source_commit": "82da3942cd19a8f11823bb0df08e478bbcc25057",
+  "build_executor": "GitHub Actions",
+  "local_application_build_executed": false,
+  "ci": {
+    "id": 39598438167,
+    "url": "https://github.com/ForLess01/asu/actions/runs/39598438167",
+    "conclusion": "success",
+    "javascript_tests": 44,
+    "python_tests": 121,
+    "browser_tests": 26,
+    "sql_pass_notices": 278
+  },
+  "initial_publication": {
+    "id": 39598815032,
+    "url": "https://github.com/ForLess01/asu/actions/runs/39598815032",
+    "build_step": "success",
+    "upload_step": "success",
+    "workflow_conclusion": "failure",
+    "verification_failure": "Cloudflare 1010 rejected the default Python-urllib user agent; explicit Asu-Deployment-Check/1.0 passed HTTPS verification"
+  },
+  "release": {
+    "model_version": "asu-reported-v1",
+    "model_sha256": "56eed94552b47f0d28f9e9c9f8eab4af87f27afab7a6fc9c47dcc60f57fc3528",
+    "label_semantics_approved": false,
+    "packaged_at": "2026-10-21T12:21:24.106Z"
+  },
+  "production_browser": {
+    "source": "real Chromium against public HTTPS app and real Neon, no mocks",
+    "checks": {
+      "public_https_html": true,
+      "compiled_entry_not_dev_source": true,
+      "desktop_onboarding_visible": true,
+      "neon_account_form_visible": true,
+      "public_origin_signup_allowed": true,
+      "real_public_session": true,
+      "password_form_cleared": true,
+      "public_origin_data_api_allowed": true,
+      "public_plan_upload": true,
+      "public_session_reload": true,
+      "second_device_public_signin": true,
+      "second_device_restores_public_plan": true,
+      "public_logout_preserves_local_plan": true,
+      "mobile_without_horizontal_overflow": true,
+      "production_worker_checks_bundle_integrity": true,
+      "production_worker_inference": true,
+      "no_browser_runtime_errors": true,
+      "disposable_accounts_removed": true
+    },
+    "checks_passed": 18,
+    "created_users": 1,
+    "deleted_users": 1,
+    "user_identifiers_or_credentials_included": false
+  },
+  "limitations": [
+    "This receipt records the first independently verified public release, not every later deployment",
+    "Interactive Google OAuth and production PWA installation/offline recovery are not established",
+    "Public availability does not approve actual-restoration semantics or prospective model validity"
+  ]
+}
