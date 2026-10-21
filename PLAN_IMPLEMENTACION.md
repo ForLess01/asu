@@ -6,6 +6,8 @@
 **Informe académico:** fuera del repositorio, en `../informes/asu/` respecto a su raíz.<br>
 **Base documental consultada:** 20 de octubre de 2026. Precios y cuotas deben reconfirmarse antes de activar servicios.
 
+> **Actualización de implementación — 21/10/2026:** por decisión aprobada, Neon Free sustituye a Supabase como proveedor activo de cuentas y sincronización. Neon Auth, Data API, migración y pruebas reales entre cuentas/dispositivos ya tienen evidencia; consultar `docs/NEON.md` y `docs/DELIVERY_STATUS.md`. Las referencias a Supabase en el diseño original quedan como antecedentes, no como configuración actual. El propietario habilitó los jobs de GitHub; la publicación se realiza desde el repositorio remoto, después de CI aprobado, sin build local. El recibo de despliegue determina si la web ya fue verificada. No cambió el carácter experimental del objetivo de ML.
+
 ## Lectura ejecutiva
 
 Asu debe responder una pregunta práctica: **«Durante este corte, ¿cuánto podría durar mi reserva y cómo puedo organizarme?»** La experiencia combina información de interrupciones, estimaciones supervisadas con incertidumbre, un balance explícito de agua y acciones compartidas.
@@ -18,7 +20,7 @@ La implementación tiene tres condiciones de salida:
 
 La arquitectura propuesta evita un servidor Python de inferencia permanentemente encendido: **Python entrena en GitHub Actions; un modelo compacto y verificable se ejecuta en un Web Worker del navegador; Cloudflare Pages sirve la aplicación; Supabase Free ofrece cuentas y sincronización.** La exportación del modelo requiere una prueba de equivalencia antes de convertirse en una decisión irreversible.
 
-**Alcance actual del trabajo:** plan, identidad gráfica inicial y preparación del repositorio. Todos los módulos, workflows, servicios, modelos finales y capítulos del informe descritos a continuación son trabajo posterior, salvo los recursos identificados expresamente como existentes.
+**Alcance de la edición inicial del plan:** planificación, identidad gráfica y preparación del repositorio. El estado ejecutado posterior se registra en `docs/DELIVERY_STATUS.md`; esta especificación no constituye por sí sola una prueba de implementación, despliegue o validez científica.
 
 ## Índice
 
@@ -1198,3 +1200,4 @@ URL de producción, commit, versión del modelo, artefactos con hashes, resultad
 | ADR-006 | Reentrenamiento automático con promoción controlada | Mantener calidad y capacidad de rollback. | Planificado. |
 | ADR-007 | Informe fuera del repositorio | Separar documento académico y producto, compartiendo artefactos reproducibles. | Requisito. |
 | ADR-008 | Logo original transparente | Identidad propia, compacta y legible. | PNG y SVG creados. |
+| ADR-009 | Neon Free + Managed Better Auth + Data API sustituyen a Supabase | Aprovechar la cuenta/CLI disponibles; mantener PostgreSQL, RLS y RPC con identidad propia de Neon. | Implementado y probado con cuentas/dispositivos desechables; sustituye la parte de backend de ADR-005. |

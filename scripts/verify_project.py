@@ -45,7 +45,7 @@ def main():
         path = destination/f'{name}.json'
         if path.exists():
             evidence[name] = json.loads(path.read_text())
-    evidence['limitations'] = ['Hosted Neon email/password Auth and synchronization are verified in separate opt-in receipts; interactive Google OAuth is not', 'Local database checks use isolated PostgreSQL with an Auth compatibility fixture', 'Service-worker coherence checks exercise logic; a packaged production PWA is not verified', 'Remote workflows are budget-gated and skipped; no executed remote tests or public deployment is claimed', 'Reported-duration model is experimental, label_semantics_approved=false']
+    evidence['limitations'] = ['Hosted Neon email/password Auth and synchronization are verified in separate opt-in receipts; interactive Google OAuth is not', 'Local database checks use isolated PostgreSQL with an Auth compatibility fixture', 'Service-worker coherence checks exercise logic; a packaged production PWA is not verified', 'Remote workflow execution and public deployment require their own dated receipts; this local run does not establish them', 'Reported-duration model is experimental, label_semantics_approved=false']
     (destination/'test-evidence.json').write_text(json.dumps(evidence, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     print(json.dumps(evidence, ensure_ascii=False, indent=2))
 

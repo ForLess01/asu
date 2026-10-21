@@ -20,6 +20,9 @@ def main():
     if b'<html' not in html.lower():
         raise SystemExit('Application HTML unavailable')
     release = json.loads(get('/version.json'))
+    expected_commit = os.environ.get('CODE_REVISION')
+    if expected_commit and release.get('commit') != expected_commit:
+        raise SystemExit('Published release/expected commit mismatch')
     model = get('/models/current/model.json')
     if hashlib.sha256(model).hexdigest() != release['model_sha256']:
         raise SystemExit('Published release/model mismatch')

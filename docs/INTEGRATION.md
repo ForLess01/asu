@@ -2,7 +2,7 @@
 
 ## Ownership and delivery
 
-The web implementation owns root npm/Vite/TypeScript configuration, `apps/web/`, `packages/`, and browser tests. The ML implementation owns `ml/`, `data/manifests/`, `artifacts/`, and generated `apps/web/public/models/`. Infrastructure owns `.github/`, `supabase/`, project documentation and environment examples. The academic report is outside the repository at `../informes/asu/`.
+The web implementation owns root npm/Vite/TypeScript configuration, `apps/web/`, `packages/`, and browser tests. The ML implementation owns `ml/`, `data/manifests/`, `artifacts/`, and generated `apps/web/public/models/`. Infrastructure owns `.github/`, provider migrations and project documentation. Neon is the active cloud provider; `supabase/` is retained only for legacy regression coverage. The academic report is outside the repository at `../informes/asu/`.
 
 The original plan and brand assets are retained. No commits, pushes, paid resources or application builds are authorized by the implementation workflow without an explicit instruction. Tests, type checks, development servers and browser inspections are permitted. Future CI may declare a build step; do not claim an actual deployed service without a public URL and verification.
 
@@ -48,9 +48,9 @@ Postprocessing: predict three values, clamp each to zero, sort to prevent crossi
 
 ## Web and persistence
 
-Root commands: `npm run dev -- --host 127.0.0.1`, `npm run typecheck`, `npm test`, `npm run test:e2e`; future packaging uses `npm run build`. Use Vite root `apps/web`, output `dist` at repository root. Guest local use works with no environment variables. Optional Supabase config names: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`.
+Root commands: `npm run dev -- --host 127.0.0.1 --port 5174`, `npm run typecheck`, `npm test`, `npm run test:e2e`; future packaging uses `npm run build`. Use Vite root `apps/web`, output `dist` at repository root. Guest local use works without registration. Optional Neon override names: `VITE_NEON_AUTH_URL`, `VITE_NEON_DATA_API_URL`. The checked-in public configuration contains only service URLs, never credentials. Both empty overrides explicitly disable cloud.
 
-Cloud snapshot relation: `household_workspaces(id uuid primary key, owner_id uuid, payload jsonb, revision integer, updated_at timestamptz)`. RLS authorizes only the owner. Payload schema version1 contains the application state, excluding auth credentials and device-only caches. Optimistic concurrency uses an `update_workspace` RPC validating authenticated owner and expected revision. UI must not advertise cloud sync when not configured. First release supports one household workspace per signed-in user; multi-user sharing is explicitly deferred unless implemented and tested.
+Cloud snapshot relation: `household_workspaces(id uuid primary key, owner_id uuid, payload jsonb, revision integer, updated_at timestamptz)`. Ownership references `neon_auth."user"(id)` and provider-owned `auth.uid()`. RLS authorizes only the owner. Payload schema version1 contains the application state, excluding auth credentials and device-only caches. Optimistic concurrency uses an `update_workspace` RPC validating authenticated owner and expected revision. UI must not advertise cloud sync when not configured. First release supports one household workspace per signed-in user; multi-user sharing is explicitly deferred unless implemented and tested.
 
 ## Evidence
 

@@ -1,0 +1,11 @@
+{
+  "provider": "cloudflare-pages",
+  "project_name": "asu-forless01",
+  "account_id": "57acd998e295ee223ea27aa6d09decc8",
+  "production_branch": "main",
+  "assigned_url": "https://asu-forless01.pages.dev",
+  "first_deployment_completed": false,
+  "public_application_verified": false,
+  "note": "Project created directly on Pages. The assigned URL is not evidence of a published application.",
+  "credentials_included": false
+}

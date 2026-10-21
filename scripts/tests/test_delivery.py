@@ -54,6 +54,18 @@ def test_smoke_binds_published_model_to_release(monkeypatch, capsys, correct_has
             smoke.main()
 
 
+def test_smoke_rejects_an_old_release_even_when_its_model_hash_matches(monkeypatch):
+    smoke = module('smoke_deployment')
+    model = b'{"fixture": true}'
+    release = {'commit': 'a'*40, 'model_sha256': hashlib.sha256(model).hexdigest()}
+    values = {'/': b'<html></html>', '/version.json': json.dumps(release).encode(), '/models/current/model.json': model}
+    monkeypatch.setenv('ASU_PUBLIC_URL', 'https://example.invalid')
+    monkeypatch.setenv('CODE_REVISION', 'b'*40)
+    monkeypatch.setattr(smoke.urllib.request, 'urlopen', lambda url, timeout: Response(values[url.removeprefix('https://example.invalid')]))
+    with pytest.raises(SystemExit, match='commit mismatch'):
+        smoke.main()
+
+
 def test_production_gate_preserves_all_active_bytes(tmp_path, monkeypatch, capsys):
     gate = module('check_promotion_gate')
     champion = tmp_path/'current'

@@ -19,14 +19,32 @@ def test_actions_are_immutable_and_jobs_bounded():
         assert 'retention-days: 7' in content or path.name == 'ci.yml'
 
 
-def test_deploy_is_explicit_and_validates_actual_url():
+def test_deploy_requires_successful_trusted_main_ci_or_explicit_manual_confirmation():
     content = (ROOT/'.github/workflows/deploy.yml').read_text()
     assert 'workflow_dispatch:' in content
     assert 'default: false' in content
-    assert 'if: inputs.confirm_experimental' in content
+    assert 'workflow_run:' in content
+    assert 'workflows: [Application and model checks]' in content
+    assert 'types: [completed]' in content
+    assert 'branches: [main]' in content
+    assert "github.event.workflow_run.conclusion == 'success'" in content
+    assert "github.event.workflow_run.event == 'push'" in content
+    assert 'github.event.workflow_run.head_repository.full_name == github.repository' in content
+    assert "github.ref == 'refs/heads/main'" in content
+    assert "github.event_name == 'workflow_dispatch' && inputs.confirm_experimental" in content
     assert content.index('Require provisioned') < content.index('Package the checked')
     assert 'scripts/smoke_deployment.py' in content
     assert 'pull_request_target' not in content
+
+
+def test_deploy_checks_out_and_stamps_the_ci_tested_commit():
+    content = (ROOT/'.github/workflows/deploy.yml').read_text()
+    assert 'ref: ${{ github.event.workflow_run.head_sha || github.sha }}' in content
+    assert 'CODE_REVISION: ${{ github.event.workflow_run.head_sha || github.sha }}' in content
+    assert 'Refuse a superseded production revision' in content
+    assert content.index('Refuse a superseded') < content.index('Publish to a previously')
+    assert 'upload-artifact' in content
+    assert 'download-artifact' not in content
 
 
 def test_training_never_automatically_promotes_or_publishes():
