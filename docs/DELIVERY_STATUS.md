@@ -26,6 +26,8 @@ The existing managed account was personalized in place, retaining its login and 
 
 The UI now renders the managed display name and household location, layered moving water surfaces and transform-based level updates, button/icon feedback and completion/dialog/save responses. Motion can be paused per device, pauses in background tabs and respects system reduced-motion preferences. Four focused desktop/mobile motion cases and the expanded ordinary browser suite pass locally; public verification is recorded after the remote pipeline completes. Private seeded-account checks use the current personalized expectations instead of hard-coded initial names.
 
+Motion/personalization release `a34023e` completed [CI 39639602472](https://github.com/ForLess01/asu/actions/runs/39639602472) and [deployment 39640142174](https://github.com/ForLess01/asu/actions/runs/39640142174), both successful. Actual logs show 61 JS, 133 Python, 46 browser tests and 278 SQL assertions. The public account passed all 14 checks at `2026-10-21T17:04:15.504Z`, including managed display name, Puno fields, clean container labels, saving/reload, offline/reconnect, cross-device recovery and logout isolation. A separate read-only public visual test confirmed changing SVG wave transforms on desktop/mobile, screenshots were inspected, and no horizontal overflow was observed. The original account and login were retained; temporary verification edits were restored. See `autosync-public.json` and `account-personalization.json` for the dated observations.
+
 | Area | Evidence |
 |---|---|
 | TypeScript | `npm run typecheck` passed. |
