@@ -47,6 +47,15 @@ def test_personalization_preserves_existing_edits_and_does_not_duplicate_items_o
         assert twice[key] == once[key]
 
 
+def test_initial_scenarios_preserve_unknown_reserves_instead_of_inventing_zero():
+    personal, seed = load('personalize_account'), load('seed_demo_account')
+    catalog = json.loads((ROOT/'apps/web/src/form-catalog.json').read_text())
+    before = seed.seed_workspace(); before['containers'][0]['volume'] = None
+    state = personal.personalized_workspace(before, 'Alex', catalog)
+    assert state['containers'][0]['volume'] is None
+    assert next(s for s in state['scenarios'] if s['hours'] == 18)['inputs']['reserves']['other'] is None
+
+
 @pytest.mark.parametrize('name', ['', 'x'*65, 'Name\nASU_SEED_PASSWORD=changed'])
 def test_invalid_profile_names_are_rejected_before_mutation(name):
     personal, seed = load('personalize_account'), load('seed_demo_account')

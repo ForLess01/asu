@@ -68,7 +68,8 @@ def personalized_workspace(before, name, catalog, now=None):
     for index, title in enumerate(titles):
         if not any(t['title'].casefold() == title.casefold() for t in state['tasks']):
             state['tasks'].append({'id': str(uuid4()), 'title': title, 'done': False, 'dueAt': timestamp(now+timedelta(hours=4+index*3))})
-    reserves = {category: sum(c['volume'] or 0 for c in state['containers'] if c['category'] == category) for category in ('drinking', 'other')}
+    selected = {category: [c for c in state['containers'] if c['category'] == category] for category in ('drinking', 'other')}
+    reserves = {category: None if any(c['volume'] is None for c in containers) else sum(c['volume'] for c in containers) for category, containers in selected.items()}
     rates = {category: sum(a['liters']*a['timesPerDay']/24 for a in state['activities'] if a['category'] == category) for category in ('drinking', 'other')}
     for hours in (18, 24, 36, 48):
         if not any(s['hours'] == hours for s in state['scenarios']):
