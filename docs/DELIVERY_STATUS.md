@@ -16,6 +16,8 @@ Account saving now belongs to the app rather than the Settings route. Local edit
 
 The persistent seed account is created and directly seeded in the dedicated Neon database. The live seed test passed 11 local-browser/real-service checks, including automatic hydration, saving, offline/reconnect and second-device recovery; the updated disposable isolation suite also passed. Private credentials remain only in `.env.seed.local`, outside Git. `seed-account.json`, `autosync-local.json` and `neon-autosync-hosted-loopback.json` record this checkpoint; production verification is recorded separately after remote deployment.
 
+The automatic-saving release `e359bd8` completed [CI 39624434994](https://github.com/ForLess01/asu/actions/runs/39624434994) and [deployment 39624783132](https://github.com/ForLess01/asu/actions/runs/39624783132), both successful: 58 JS, 126 Python, 42 browser tests and 278 SQL assertions. Real production acceptance then passed all 11 seeded-account checks at `2026-10-21T15:35:18.609Z`, including logout isolation; see `autosync-public.json`. The initial incomplete attempt is preserved in `autosync-public-initial-failure.json`, not relabelled as success. The seed account remains usable and the temporary test volume was restored.
+
 Forms now use 25 department choices, 1,893 reference district entries, 48 historical utilities, validated suggestions and Tab completion for unique typed prefixes. Explicit not-listed entry supports catalog gaps. Names/measurements remain user-specific; no values are invented from placeholders. Source snapshots and license are documented separately.
 
 | Area | Evidence |

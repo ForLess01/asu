@@ -59,8 +59,13 @@ test('seeded account loads real database data and saves online/offline changes a
     await expect(phone.getByTestId('container-row').filter({ hasText: 'Tanque principal · demo' })).toContainText('598');
     verify('second_device_automatically_recovers_latest_edit', true);
     verify('mobile_has_no_horizontal_overflow', await phone.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-    await phone.goto('/#settings'); await phone.getByRole('button', { name: 'Desconectar', exact: true }).click();
+    stage = 'logout-navigation';
+    await phone.goto('/#settings');
+    stage = 'logout-request';
+    await phone.getByRole('button', { name: 'Desconectar', exact: true }).click();
+    stage = 'logout-session-cleared';
     await expect(phone.getByTestId('account-save-status')).toHaveCount(0);
+    stage = 'logout-isolated-guest';
     await expect(phone.getByLabel('Nombre del hogar', { exact: true })).toHaveValue('');
     verify('logout_returns_to_isolated_guest', true);
   } catch { failed = stage; }

@@ -1,0 +1,23 @@
+{
+  "observed_at": "2026-10-21T15:35:18.609Z",
+  "origin": "https://asu-forless01.pages.dev",
+  "status": "passed",
+  "failed_stage": null,
+  "checks": {
+    "credentials_file_private": true,
+    "real_seed_account_signin": true,
+    "direct_database_seed_hydrated_without_manual_restore": true,
+    "seeded_containers_present": true,
+    "automatic_online_rpc_succeeded": true,
+    "online_edit_survives_reload": true,
+    "offline_edit_retained": true,
+    "reconnect_upload_succeeded": true,
+    "second_device_automatically_recovers_latest_edit": true,
+    "mobile_has_no_horizontal_overflow": true,
+    "logout_returns_to_isolated_guest": true
+  },
+  "checks_passed": 11,
+  "persistent_seed_account_retained": true,
+  "original_seed_volume_restored": true,
+  "credentials_or_account_identifiers_included": false
+}

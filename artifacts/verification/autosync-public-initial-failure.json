@@ -1,0 +1,23 @@
+{
+  "observed_at": "2026-10-21T15:23:46.221Z",
+  "origin": "https://asu-forless01.pages.dev",
+  "status": "failed",
+  "failed_stage": "second-device",
+  "checks": {
+    "credentials_file_private": true,
+    "real_seed_account_signin": true,
+    "direct_database_seed_hydrated_without_manual_restore": true,
+    "seeded_containers_present": true,
+    "automatic_online_rpc_succeeded": true,
+    "online_edit_survives_reload": true,
+    "offline_edit_retained": true,
+    "reconnect_upload_succeeded": true,
+    "second_device_automatically_recovers_latest_edit": true,
+    "mobile_has_no_horizontal_overflow": true
+  },
+  "checks_passed": 10,
+  "persistent_seed_account_retained": true,
+  "original_seed_volume_restored": true,
+  "credentials_or_account_identifiers_included": false,
+  "note": "Initial attempt stopped after recovery checks but before completing logout verification; user reported connectivity loss. No network-cause certainty is inferred. Later complete execution is recorded separately."
+}
