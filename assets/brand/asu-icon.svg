@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Asu icon</title>
+  <desc id="description">Original lowercase a symbol and water drop for Asu, with transparent background.</desc>
+  <g transform="translate(28 0) skewX(-7)" fill="none" stroke="#007D77" stroke-width="68" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M350 283c0 66-42 112-102 112S140 349 140 283s48-112 108-112 102 46 102 112Z"/>
+    <path d="M350 172v223"/>
+  </g>
+  <path fill="#39CDB4" d="M386 56c-14 22-33 42-33 62 0 18 15 33 33 33s33-15 33-33c0-20-19-40-33-62Z"/>
+</svg>

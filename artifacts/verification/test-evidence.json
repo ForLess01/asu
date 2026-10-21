@@ -1,0 +1,74 @@
+{
+  "executed_at": "2026-10-21T05:32:28.197096+00:00",
+  "status": "passed",
+  "tests": [
+    {
+      "name": "TypeScript",
+      "command": "npm run typecheck",
+      "exit_code": 0,
+      "passed": null,
+      "seconds": 1.24
+    },
+    {
+      "name": "Domain, browser-model integrity and 10000-vector Node parity",
+      "command": "npm test",
+      "exit_code": 0,
+      "passed": 27,
+      "seconds": 0.62
+    },
+    {
+      "name": "ML, SQL static guardrails and delivery checks",
+      "command": "python3 -m pytest -q -p no:cacheprovider ml/tests supabase/tests/test_schema.py scripts/tests",
+      "exit_code": 0,
+      "passed": 101,
+      "seconds": 5.27
+    },
+    {
+      "name": "Desktop and mobile user flows",
+      "command": "npm run test:e2e",
+      "exit_code": 0,
+      "passed": 16,
+      "seconds": 13.01
+    },
+    {
+      "name": "Production-promotion rejection preserving active model",
+      "command": "python3 scripts/check_promotion_gate.py --candidate artifacts/current --champion apps/web/public/models/current",
+      "exit_code": 0,
+      "passed": null,
+      "seconds": 0.22
+    }
+  ],
+  "application_build_executed": false,
+  "deployment_executed": false,
+  "database": {
+    "status": "passed",
+    "executed_at": "2026-10-21T05:27:45.203932+00:00",
+    "engine": "psql (PostgreSQL) 16.15 (Homebrew)",
+    "scope": "Isolated PostgreSQL with test auth.uid fixture; not hosted Supabase OAuth",
+    "results": [
+      {
+        "file": "supabase/tests/auth_fixture.sql",
+        "exit_code": 0,
+        "passed_assertions": 0
+      },
+      {
+        "file": "supabase/migrations/20261020000100_household_workspaces.sql",
+        "exit_code": 0,
+        "passed_assertions": 0
+      },
+      {
+        "file": "supabase/tests/workspace_isolation.sql",
+        "exit_code": 0,
+        "passed_assertions": 132
+      }
+    ],
+    "assertions": 132
+  },
+  "limitations": [
+    "No hosted OAuth/PostgREST/cross-device integration has been verified",
+    "Database checks use isolated PostgreSQL with an Auth compatibility fixture",
+    "Service-worker coherence checks exercise logic; a packaged production PWA is not verified",
+    "No remote GitHub workflow run or public deployment is claimed",
+    "Reported-duration model is experimental, label_semantics_approved=false"
+  ]
+}

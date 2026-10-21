@@ -1,0 +1,222 @@
+import { test, expect, type Page } from '@playwright/test';
+
+async function navigate(page: Page, hash: string) {
+  await page.locator(`a[href="#${hash}"]:visible`).first().click();
+}
+async function setup(page: Page) {
+  await page.goto('/');
+  await page.getByLabel('Nombre del hogar', { exact: true }).fill('Casa de prueba');
+  await page.getByLabel('Distrito', { exact: true }).fill('Pueblo Libre');
+  await page.getByRole('button', { name: 'Crear mi plan local' }).click();
+  await expect(page.getByRole('heading', { name: 'Tu hogar, mejor preparado.' })).toBeVisible();
+}
+async function activity(page: Page, name: string, amount: string, essential: boolean) {
+  await page.getByRole('button', { name: 'Añadir actividad', exact: true }).first().click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Actividad', { exact: true }).fill(name);
+  await dialog.getByLabel('Litros por vez (todo el hogar)').fill(amount);
+  await dialog.getByLabel('Esencial: no posponer en escenarios').setChecked(essential);
+  await dialog.getByRole('button', { name: 'Guardar actividad' }).click();
+  await expect(dialog).not.toBeVisible();
+}
+
+test('guest household, reserve validation, scenario, incident closure, language and persistence', async ({ page }, testInfo) => {
+  await setup(page);
+  await navigate(page, 'reserve');
+  await page.getByRole('button', { name: 'Añadir recipiente', exact: true }).click();
+  let dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Nombre del recipiente').fill('Tanque familiar');
+  await dialog.getByLabel('Capacidad (L)', { exact: true }).fill('800');
+  await dialog.getByLabel('Agua disponible (L)', { exact: true }).fill('900');
+  await dialog.getByRole('button', { name: 'Guardar recipiente' }).click();
+  await expect(dialog.getByRole('alert')).toContainText('El volumen');
+  await expect(page.getByTestId('container-row')).toHaveCount(0);
+  const invalidButtonBounds = await dialog.getByRole('button', { name: 'Guardar recipiente' }).boundingBox();
+  await dialog.getByLabel('Agua disponible (L)', { exact: true }).fill('800');
+  await dialog.getByLabel('Agua disponible (L)', { exact: true }).blur();
+  const validButtonBounds = await dialog.getByRole('button', { name: 'Guardar recipiente' }).boundingBox();
+  expect(validButtonBounds?.y).toBe(invalidButtonBounds?.y);
+  await dialog.getByRole('button', { name: 'Guardar recipiente' }).click();
+  await expect(dialog).not.toBeVisible();
+  await expect(page.getByTestId('container-row')).toContainText('800');
+  await navigate(page, 'plan');
+  await activity(page, 'Higiene esencial', '2400', true);
+  await activity(page, 'Lavado opcional', '2400', false);
+  await page.getByTestId('scenario-hours').fill('6');
+  const row = page.getByTestId('scenario-results').getByRole('row').filter({ hasText: 'Otros usos' });
+  await expect(row).toContainText('200 L/h');
+  await expect(row).toContainText('400 L');
+  await page.getByLabel('Lavado opcional', { exact: true }).check();
+  await expect(row.getByRole('cell').last()).toHaveText('0 L');
+  await page.getByRole('button', { name: 'Guardar escenario' }).click();
+  await expect(page.getByRole('heading', { name: 'Escenarios guardados' })).toBeVisible();
+  await navigate(page, 'reserve');
+  await page.getByRole('button', { name: 'Editar Tanque familiar', exact: true }).click();
+  dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Agua disponible (L)', { exact: true }).fill('600');
+  await dialog.getByRole('button', { name: 'Guardar recipiente' }).click();
+  await expect(dialog).not.toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId('container-row')).toContainText('600');
+  page.once('dialog', prompt => prompt.dismiss());
+  await page.getByRole('button', { name: 'Eliminar Tanque familiar', exact: true }).click();
+  await expect(page.getByTestId('container-row')).toHaveCount(1);
+  await navigate(page, 'incidents');
+  await page.getByRole('button', { name: 'Registrar un corte', exact: true }).click();
+  dialog = page.getByRole('dialog');
+  const start = new Date(Date.now() - 7 * 3600000).toISOString().slice(0, 16);
+  await dialog.getByLabel('Inicio del corte · hora de Lima').fill(start);
+  await dialog.getByRole('button', { name: 'Registrar corte', exact: true }).click();
+  await expect(dialog).not.toBeVisible();
+  await page.getByRole('button', { name: 'Confirmar que continúa' }).click();
+  await page.getByRole('button', { name: 'Ya volvió el agua' }).click();
+  await page.getByRole('button', { name: 'Confirmar retorno observado', exact: true }).click();
+  await expect(page.getByTestId('incident-row')).toContainText('Retorno observado');
+  await expect(page.getByTestId('incident-row')).not.toContainText('Sigue abierto');
+  await navigate(page, 'tasks');
+  await page.getByLabel('Qué hay que hacer').fill('Consultar el aviso de la EPS');
+  await page.getByRole('button', { name: 'Añadir tarea' }).click();
+  await page.getByLabel('Consultar el aviso de la EPS', { exact: true }).check();
+  await expect(page.getByLabel('Consultar el aviso de la EPS', { exact: true })).toBeEnabled();
+  await page.reload();
+  await expect(page.getByLabel('Consultar el aviso de la EPS', { exact: true })).toBeChecked();
+  await page.getByRole('button', { name: 'Switch to English' }).click();
+  await expect(page.getByRole('heading', { name: 'One thing at a time.' })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'One thing at a time.' })).toBeVisible();
+  await navigate(page, 'home');
+  await expect(page.getByRole('heading', { name: 'A little more prepared.' })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('dashboard.png'), fullPage: true });
+  await expect(page.locator('body')).toHaveJSProperty('scrollWidth', await page.locator('body').evaluate(node => node.clientWidth));
+});
+
+test('unknown volume, invalid restore, export, reset confirmation and example isolation', async ({ page }) => {
+  await setup(page);
+  await navigate(page, 'reserve');
+  await page.getByRole('button', { name: 'Añadir recipiente', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Nombre del recipiente').fill('<script>never executed</script>');
+  await dialog.getByLabel('No conozco la capacidad').check();
+  await dialog.getByLabel('Todavía no lo sé').check();
+  await dialog.getByRole('button', { name: 'Guardar recipiente' }).click();
+  await expect(page.getByTestId('container-row')).toContainText('<script>never executed</script>');
+  await expect(page.getByTestId('container-row')).toContainText('Por medir');
+  await page.locator('a[href="#settings"]:visible').first().click();
+  await expect(page.getByText('No configurada · solo local', { exact: true })).toBeVisible();
+  await page.getByLabel('Restaurar respaldo JSON').setInputFiles({ name: 'invalid.json', mimeType: 'application/json', buffer: Buffer.from('{"schema_version":999}') });
+  await expect(page.getByRole('alert')).toContainText('No se cambió tu plan');
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Exportar mis datos JSON' }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/^asu-.*\.json$/);
+  await page.getByRole('button', { name: 'Abrir ejemplo', exact: true }).click();
+  await expect(page.getByText('Modo ejemplo · datos ficticios separados de tu hogar')).toBeVisible();
+  await page.getByRole('button', { name: 'Volver a mis datos', exact: true }).click();
+  await navigate(page, 'reserve');
+  await expect(page.getByTestId('container-row')).toContainText('<script>never executed</script>');
+  page.once('dialog', prompt => prompt.accept());
+  await page.getByRole('button', { name: 'Eliminar <script>never executed</script>', exact: true }).click();
+  await expect(page.getByTestId('container-row')).toHaveCount(0);
+});
+
+test('experimental Worker loads real artifact and refuses current and residual predictions', async ({ page }) => {
+  await page.goto('/#lab');
+  await expect(page.getByTestId('model-status')).toHaveText('Listo · experimental', { timeout: 25000 });
+  await expect(page.getByText('Vinculación verificada del paquete', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Ejecutar modelo histórico' }).click();
+  await expect(page.getByTestId('prediction-result')).toContainText('no retorno real');
+  await page.getByRole('combobox', { name: 'EPS', exact: true }).selectOption('SEDAPAL');
+  await page.getByRole('combobox', { name: 'Departamento', exact: true }).selectOption('AMAZONAS');
+  await page.getByRole('button', { name: 'Ejecutar modelo histórico' }).click();
+  await expect(page.getByRole('alert')).toContainText('no compatible');
+  await expect(page.getByTestId('prediction-result')).toHaveCount(0);
+  await page.getByRole('combobox', { name: 'Departamento', exact: true }).selectOption('LIMA');
+  await page.getByLabel('Horas transcurridas').fill('2');
+  await page.getByRole('button', { name: 'Ejecutar modelo histórico' }).click();
+  await expect(page.getByRole('alert')).toContainText('Sin modelo residual validado');
+  await expect(page.getByTestId('prediction-result')).toHaveCount(0);
+  await page.getByLabel('Inicio histórico · Lima').fill(new Date(Date.now() - 5 * 3600000).toISOString().slice(0, 16));
+  await page.getByRole('button', { name: 'Ejecutar modelo histórico' }).click();
+  await expect(page.getByRole('alert')).toContainText('fuera del alcance histórico');
+  await page.getByRole('button', { name: 'Switch to English' }).click();
+  await expect(page.getByRole('heading', { name: 'Reported-duration laboratory' })).toBeVisible();
+});
+
+test('English guest can create a household, reserve, plan and observed restoration', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Switch to English' }).click();
+  await page.getByLabel('Household name', { exact: true }).fill('English demo home');
+  await page.getByLabel('District', { exact: true }).fill('Pueblo Libre');
+  await page.getByRole('button', { name: 'Create my local plan' }).click();
+  await expect(page.getByRole('heading', { name: 'A little more prepared.' })).toBeVisible();
+  await navigate(page, 'reserve');
+  await page.getByRole('button', { name: 'Add a container', exact: true }).click();
+  let dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Container name').fill('Kitchen water');
+  await dialog.getByLabel('Water use').selectOption('drinking');
+  await dialog.getByLabel('Capacity (L)', { exact: true }).fill('20');
+  await dialog.getByLabel('Available water (L)', { exact: true }).fill('10');
+  await dialog.getByRole('button', { name: 'Save container' }).click();
+  await expect(dialog).not.toBeVisible();
+  await navigate(page, 'plan');
+  await page.getByRole('button', { name: 'Add activity', exact: true }).first().click();
+  dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Activity', { exact: true }).fill('Cooking');
+  await dialog.getByLabel('Water use').selectOption('drinking');
+  await dialog.getByLabel('Liters per use (whole household)').fill('24');
+  await dialog.getByRole('button', { name: 'Save activity' }).click();
+  await expect(dialog).not.toBeVisible();
+  await page.getByTestId('scenario-hours').fill('12');
+  const row = page.getByTestId('scenario-results').getByRole('row').filter({ hasText: 'Drinking & cooking' });
+  await expect(row.getByRole('cell').last()).toHaveText('2 L');
+  await page.getByRole('button', { name: 'Save scenario' }).click();
+  await expect(page.getByRole('heading', { name: 'Saved scenarios' })).toBeVisible();
+  await navigate(page, 'incidents');
+  await page.getByRole('button', { name: 'Record an outage' }).click();
+  dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Outage start · Lima time').fill(new Date(Date.now() - 7 * 3600000).toISOString().slice(0, 16));
+  await dialog.getByRole('button', { name: 'Record outage', exact: true }).click();
+  await expect(dialog).not.toBeVisible();
+  await page.getByRole('button', { name: 'Water is back' }).click();
+  await page.getByRole('button', { name: 'Confirm observed restoration' }).click();
+  await expect(page.getByTestId('incident-row')).toContainText('Restoration observed');
+  await page.reload();
+  await expect(page.getByTestId('incident-row')).toContainText('Restoration observed');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+});
+
+test('reset and corrupt storage recovery require confirmation and never silently overwrite', async ({ page }) => {
+  await setup(page);
+  await page.locator('a[href="#settings"]:visible').first().click();
+  page.once('dialog', prompt => prompt.dismiss());
+  await page.getByRole('button', { name: 'Borrar plan local' }).click();
+  await expect(page.getByLabel('Nombre del hogar', { exact: true })).toHaveValue('Casa de prueba');
+  page.once('dialog', prompt => prompt.accept());
+  await page.getByRole('button', { name: 'Borrar plan local' }).click();
+  await expect(page.getByLabel('Nombre del hogar', { exact: true })).toHaveValue('');
+  await page.reload();
+  await navigate(page, 'home');
+  await expect(page.getByRole('button', { name: 'Crear mi plan local' })).toBeVisible();
+  // Simulate disk corruption, not an application mutation or internal-state assertion.
+  await page.evaluate(async () => {
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.open('asu-household-v1', 1);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        const db = request.result, transaction = db.transaction('workspaces', 'readwrite');
+        transaction.objectStore('workspaces').put('{damaged-json', 'guest');
+        transaction.oncomplete = () => { db.close(); resolve(); };
+        transaction.onerror = () => { db.close(); reject(transaction.error); };
+      };
+    });
+  });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Tus datos necesitan atención' })).toBeVisible();
+  page.once('dialog', prompt => prompt.dismiss());
+  await page.getByRole('button', { name: 'Restablecer almacenamiento' }).click();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Tus datos necesitan atención' })).toBeVisible();
+  page.once('dialog', prompt => prompt.accept());
+  await page.getByRole('button', { name: 'Restablecer almacenamiento' }).click();
+  await expect(page.getByRole('button', { name: 'Crear mi plan local' })).toBeVisible();
+});

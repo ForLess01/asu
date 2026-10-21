@@ -1,0 +1,75 @@
+{
+  "status": "experimental",
+  "target_semantics": "reported_duration_not_actual_restoration",
+  "label_semantics_approved": false,
+  "run_id": "reported-0798ed3ef4a6-f0bd6e8d6571",
+  "source_sha256": "0798ed3ef4a649b8f4b0c75a37a3799d3694abfcaa7d7524c80cb0ebf04d2a4c",
+  "counts": {
+    "raw_rows": 45671,
+    "eligible_events": 32682,
+    "final_fit_events": 22027,
+    "calibration_events": 7796,
+    "test_events": 2830,
+    "positive_tail_over_168h": 100
+  },
+  "test": {
+    "raw": {
+      "n": 2830,
+      "mae": 4.645254748695661,
+      "medae": 1.9836964084865638,
+      "rmse": 25.867677860778176,
+      "r2": 0.0010501808711896876,
+      "coverage": 0.7307420494699647,
+      "mean_width_hours": 11.291199638172785,
+      "median_width_hours": 6.107680138253557,
+      "interval_score_80": 30.009406112085482,
+      "pinball": {
+        "p10": 0.6645566673711012,
+        "p50": 2.3226273743478303,
+        "p90": 2.336383943837447
+      }
+    },
+    "calibrated": {
+      "n": 2830,
+      "mae": 4.645254748695661,
+      "medae": 1.9836964084865638,
+      "rmse": 25.867677860778176,
+      "r2": 0.0010501808711896876,
+      "coverage": 0.7554770318021201,
+      "mean_width_hours": 11.559145933300822,
+      "median_width_hours": 6.375626433381595,
+      "interval_score_80": 29.934385769580043,
+      "pinball": {
+        "p10": 0.660702166358173,
+        "p50": 2.3226273743478303,
+        "p90": 2.3327364105998307
+      }
+    }
+  },
+  "strong_baseline_mae": 4.940017667844523,
+  "relative_improvement_pct": 5.966839371193511,
+  "parity": {
+    "count": 10000,
+    "max_abs_error": 1.4210854715202004e-14,
+    "tolerance_hours": 0.0001,
+    "threshold_software_probe_count": 2304,
+    "python_artifact_seconds_10000": 0.09166474995436147,
+    "node_browser_status": "pending_frontend_owned_verification",
+    "expected_source": "sklearn_float32"
+  },
+  "runtime": {
+    "final_three_quantile_fit_seconds": 2.048231458000373,
+    "threads": 1,
+    "total_seconds": 20.727815375023056,
+    "model_bytes": 505325
+  },
+  "limitations": [
+    "End fields have not been verified as actual restoration; this predicts reported duration only.",
+    "label_semantics_approved=false; no production validity or household restoration guarantee.",
+    "January–May 2024 was previously viewed and is historical exploratory reuse, not independent acceptance.",
+    "All positive durations are retained, including questionable extreme labels; they are not verified truth.",
+    "Nonnegative CQR is fitted only on 2023; temporal drift invalidates unconditional exchangeability guarantees.",
+    "Only supported training EPS/department combinations are served; no residual or elapsed-time forecast.",
+    "No household data, cause, year, end time, affected connections or response trucks enter model inputs."
+  ]
+}

@@ -1,0 +1,39 @@
+name: Reproducible experimental training
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: experimental-training
+  cancel-in-progress: false
+jobs:
+  train:
+    if: vars.ASU_HOSTED_JOBS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - run: python -m pip install -r ml/requirements.txt
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: python ml/run_pipeline.py --output artifacts/runs/${{ github.run_id }}
+      - run: python ml/evaluate_artifact.py --model artifacts/runs/${{ github.run_id }}/model.json --fixtures artifacts/runs/${{ github.run_id }}/parity-fixtures.json
+      - name: Verify candidate in Node against Python outputs
+        env:
+          ASU_PARITY_DIR: artifacts/runs/${{ github.run_id }}
+        run: npm test -- packages/inference/src/parity.test.ts
+      - name: Demonstrate scientific gate rejection without changing the active model
+        run: python scripts/check_promotion_gate.py --candidate artifacts/runs/${{ github.run_id }} --champion apps/web/public/models/current
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: experimental-evidence-${{ github.run_id }}
+          path: artifacts/runs/${{ github.run_id }}/evidence_bundle.zip
+          retention-days: 7

@@ -1,0 +1,4 @@
+IDINTERRUPCION,EPS,DEPARTAMENTO,start,reason
+303aa445358cc7be8064a49969c6db78,EPS EMAQ,CUSCO,2024-01-02 06:30:00-05:00,unsupported_training_combination
+3f875a1fed39fee9555e1bb037630877,EPS EMAQ,CUSCO,2024-01-11 09:45:00-05:00,unsupported_training_combination
+cbcfb057bbb06a04d6146203960d45e7,EMSAPA YLO,JUNIN,2024-02-15 21:00:00-05:00,unsupported_training_combination

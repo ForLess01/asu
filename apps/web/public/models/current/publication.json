@@ -1,0 +1,19 @@
+{
+  "status": "experimental_publish_allowed",
+  "production_gate_passed": false,
+  "experimental_only": true,
+  "reasons": [],
+  "scientific_blockers": [
+    "label_semantics_unapproved",
+    "no_independent_prospective_acceptance"
+  ],
+  "policy": {
+    "baseline_min_improvement": 0.05,
+    "champion_max_mae_degradation": 0.02,
+    "coverage_range": [
+      0.75,
+      0.85
+    ],
+    "parity_tolerance_hours": 0.0001
+  }
+}

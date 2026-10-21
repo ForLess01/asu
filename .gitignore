@@ -1,0 +1,33 @@
+# Local secrets and machine settings
+.env
+.env.*
+!.env.example
+.DS_Store
+.venv/
+__pycache__/
+node_modules/
+dist/
+coverage/
+.pytest_cache/
+.wrangler/
+.supabase/
+.dev.vars*
+data/manifests/raw/
+artifacts/.cache/
+maintenance-result.json
+
+# Generated training resources; publish only reviewed release artifacts
+data/raw/
+data/interim/
+data/processed/
+artifacts/runs/
+*.joblib
+*.pkl
+
+# The academic report lives outside this repository
+informes/
+report/
+*.aux
+*.log
+*.out
+*.toc

@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "executed_at": "2026-10-21T05:27:45.203932+00:00",
+  "engine": "psql (PostgreSQL) 16.15 (Homebrew)",
+  "scope": "Isolated PostgreSQL with test auth.uid fixture; not hosted Supabase OAuth",
+  "results": [
+    {
+      "file": "supabase/tests/auth_fixture.sql",
+      "exit_code": 0,
+      "passed_assertions": 0
+    },
+    {
+      "file": "supabase/migrations/20261020000100_household_workspaces.sql",
+      "exit_code": 0,
+      "passed_assertions": 0
+    },
+    {
+      "file": "supabase/tests/workspace_isolation.sql",
+      "exit_code": 0,
+      "passed_assertions": 132
+    }
+  ],
+  "assertions": 132
+}

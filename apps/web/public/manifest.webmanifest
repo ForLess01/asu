@@ -1,0 +1,6 @@
+{
+  "id": "/", "name": "Asu · Tu agua, con un plan", "short_name": "Asu",
+  "lang": "es-PE", "start_url": "/", "scope": "/", "display": "standalone",
+  "background_color": "#F5F8F7", "theme_color": "#007D77",
+  "icons": [{ "src": "/brand/asu-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

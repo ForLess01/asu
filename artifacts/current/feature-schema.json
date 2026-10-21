@@ -1,0 +1,360 @@
+{
+  "feature_order": [
+    "month",
+    "weekday",
+    "hour",
+    "eps",
+    "department"
+  ],
+  "preprocessing": {
+    "categories": {
+      "eps": [
+        "AGUA TUMBES",
+        "EMAPA CAÑETE",
+        "EMAPA HUARAL",
+        "EMAPA PASCO",
+        "EMAPA SAN MARTIN",
+        "EMAPAB",
+        "EMAPACOP",
+        "EMAPAVIGS",
+        "EMAPICA",
+        "EMAPISCO",
+        "EMPSSAPAL",
+        "EMSAPA CALCA",
+        "EMUSAP",
+        "EMUSAP ABANCAY",
+        "EPS AGUAS DE LIMA NORTE",
+        "EPS BARRANCA",
+        "EPS CHAVIN",
+        "EPS EMAPA HUANCAVELICA",
+        "EPS EMAPAT",
+        "EPS EMSAP CHANKA",
+        "EPS EMSAPUNO",
+        "EPS GRAU",
+        "EPS ILO",
+        "EPS MARAÑON",
+        "EPS MOQUEGUA",
+        "EPS MOYOBAMBA",
+        "EPS MUNICIPAL MANTARO",
+        "EPS NOR PUNO",
+        "EPS RIOJA",
+        "EPS SEDACAJ",
+        "EPS SEDAJULIACA",
+        "EPS SEDALORETO",
+        "EPS SELVA CENTRAL",
+        "EPS SEMAPACH",
+        "EPS SIERRA CENTRAL",
+        "EPS TACNA",
+        "EPSEL",
+        "EPSSMU",
+        "SEDA AYACUCHO",
+        "SEDA CHIMBOTE",
+        "SEDA HUANUCO",
+        "SEDACUSCO",
+        "SEDALIB",
+        "SEDAM HUANCAYO",
+        "SEDAPAL",
+        "SEDAPAR"
+      ],
+      "department": [
+        "AMAZONAS",
+        "ANCASH",
+        "APURIMAC",
+        "AREQUIPA",
+        "AYACUCHO",
+        "CAJAMARCA",
+        "CALLAO",
+        "CUSCO",
+        "HUANCAVELICA",
+        "HUANUCO",
+        "ICA",
+        "JUNIN",
+        "LA LIBERTAD",
+        "LAMBAYEQUE",
+        "LIMA",
+        "LORETO",
+        "MADRE DE DIOS",
+        "MOQUEGUA",
+        "PASCO",
+        "PIURA",
+        "PUNO",
+        "SAN MARTIN",
+        "TACNA",
+        "TUMBES",
+        "UCAYALI"
+      ]
+    },
+    "unknown_value": -1
+  },
+  "support": {
+    "eps_codes": [
+      "AGUA TUMBES",
+      "EMAPA CAÑETE",
+      "EMAPA HUARAL",
+      "EMAPA PASCO",
+      "EMAPA SAN MARTIN",
+      "EMAPAB",
+      "EMAPACOP",
+      "EMAPAVIGS",
+      "EMAPICA",
+      "EMAPISCO",
+      "EMPSSAPAL",
+      "EMSAPA CALCA",
+      "EMUSAP",
+      "EMUSAP ABANCAY",
+      "EPS AGUAS DE LIMA NORTE",
+      "EPS BARRANCA",
+      "EPS CHAVIN",
+      "EPS EMAPA HUANCAVELICA",
+      "EPS EMAPAT",
+      "EPS EMSAP CHANKA",
+      "EPS EMSAPUNO",
+      "EPS GRAU",
+      "EPS ILO",
+      "EPS MARAÑON",
+      "EPS MOQUEGUA",
+      "EPS MOYOBAMBA",
+      "EPS MUNICIPAL MANTARO",
+      "EPS NOR PUNO",
+      "EPS RIOJA",
+      "EPS SEDACAJ",
+      "EPS SEDAJULIACA",
+      "EPS SEDALORETO",
+      "EPS SELVA CENTRAL",
+      "EPS SEMAPACH",
+      "EPS SIERRA CENTRAL",
+      "EPS TACNA",
+      "EPSEL",
+      "EPSSMU",
+      "SEDA AYACUCHO",
+      "SEDA CHIMBOTE",
+      "SEDA HUANUCO",
+      "SEDACUSCO",
+      "SEDALIB",
+      "SEDAM HUANCAYO",
+      "SEDAPAL",
+      "SEDAPAR"
+    ],
+    "departments": [
+      "AMAZONAS",
+      "ANCASH",
+      "APURIMAC",
+      "AREQUIPA",
+      "AYACUCHO",
+      "CAJAMARCA",
+      "CALLAO",
+      "CUSCO",
+      "HUANCAVELICA",
+      "HUANUCO",
+      "ICA",
+      "JUNIN",
+      "LA LIBERTAD",
+      "LAMBAYEQUE",
+      "LIMA",
+      "LORETO",
+      "MADRE DE DIOS",
+      "MOQUEGUA",
+      "PASCO",
+      "PIURA",
+      "PUNO",
+      "SAN MARTIN",
+      "TACNA",
+      "TUMBES",
+      "UCAYALI"
+    ],
+    "combinations": [
+      {
+        "eps": "AGUA TUMBES",
+        "department": "TUMBES"
+      },
+      {
+        "eps": "EMAPA CAÑETE",
+        "department": "LIMA"
+      },
+      {
+        "eps": "EMAPA HUARAL",
+        "department": "LIMA"
+      },
+      {
+        "eps": "EMAPA PASCO",
+        "department": "PASCO"
+      },
+      {
+        "eps": "EMAPA SAN MARTIN",
+        "department": "SAN MARTIN"
+      },
+      {
+        "eps": "EMAPAB",
+        "department": "AMAZONAS"
+      },
+      {
+        "eps": "EMAPACOP",
+        "department": "UCAYALI"
+      },
+      {
+        "eps": "EMAPAVIGS",
+        "department": "ICA"
+      },
+      {
+        "eps": "EMAPICA",
+        "department": "ICA"
+      },
+      {
+        "eps": "EMAPISCO",
+        "department": "ICA"
+      },
+      {
+        "eps": "EMPSSAPAL",
+        "department": "CUSCO"
+      },
+      {
+        "eps": "EMSAPA CALCA",
+        "department": "CUSCO"
+      },
+      {
+        "eps": "EMUSAP",
+        "department": "AMAZONAS"
+      },
+      {
+        "eps": "EMUSAP ABANCAY",
+        "department": "APURIMAC"
+      },
+      {
+        "eps": "EPS AGUAS DE LIMA NORTE",
+        "department": "LIMA"
+      },
+      {
+        "eps": "EPS BARRANCA",
+        "department": "LIMA"
+      },
+      {
+        "eps": "EPS CHAVIN",
+        "department": "ANCASH"
+      },
+      {
+        "eps": "EPS EMAPA HUANCAVELICA",
+        "department": "HUANCAVELICA"
+      },
+      {
+        "eps": "EPS EMAPAT",
+        "department": "MADRE DE DIOS"
+      },
+      {
+        "eps": "EPS EMSAP CHANKA",
+        "department": "APURIMAC"
+      },
+      {
+        "eps": "EPS EMSAPUNO",
+        "department": "PUNO"
+      },
+      {
+        "eps": "EPS GRAU",
+        "department": "PIURA"
+      },
+      {
+        "eps": "EPS ILO",
+        "department": "MOQUEGUA"
+      },
+      {
+        "eps": "EPS MARAÑON",
+        "department": "CAJAMARCA"
+      },
+      {
+        "eps": "EPS MOQUEGUA",
+        "department": "MOQUEGUA"
+      },
+      {
+        "eps": "EPS MOYOBAMBA",
+        "department": "SAN MARTIN"
+      },
+      {
+        "eps": "EPS MUNICIPAL MANTARO",
+        "department": "JUNIN"
+      },
+      {
+        "eps": "EPS NOR PUNO",
+        "department": "PUNO"
+      },
+      {
+        "eps": "EPS RIOJA",
+        "department": "SAN MARTIN"
+      },
+      {
+        "eps": "EPS SEDACAJ",
+        "department": "CAJAMARCA"
+      },
+      {
+        "eps": "EPS SEDAJULIACA",
+        "department": "PUNO"
+      },
+      {
+        "eps": "EPS SEDALORETO",
+        "department": "LORETO"
+      },
+      {
+        "eps": "EPS SELVA CENTRAL",
+        "department": "JUNIN"
+      },
+      {
+        "eps": "EPS SELVA CENTRAL",
+        "department": "PASCO"
+      },
+      {
+        "eps": "EPS SEMAPACH",
+        "department": "ICA"
+      },
+      {
+        "eps": "EPS SIERRA CENTRAL",
+        "department": "JUNIN"
+      },
+      {
+        "eps": "EPS TACNA",
+        "department": "TACNA"
+      },
+      {
+        "eps": "EPSEL",
+        "department": "LAMBAYEQUE"
+      },
+      {
+        "eps": "EPSSMU",
+        "department": "AMAZONAS"
+      },
+      {
+        "eps": "SEDA AYACUCHO",
+        "department": "AYACUCHO"
+      },
+      {
+        "eps": "SEDA CHIMBOTE",
+        "department": "ANCASH"
+      },
+      {
+        "eps": "SEDA HUANUCO",
+        "department": "HUANUCO"
+      },
+      {
+        "eps": "SEDACUSCO",
+        "department": "CUSCO"
+      },
+      {
+        "eps": "SEDALIB",
+        "department": "LA LIBERTAD"
+      },
+      {
+        "eps": "SEDAM HUANCAYO",
+        "department": "JUNIN"
+      },
+      {
+        "eps": "SEDAPAL",
+        "department": "CALLAO"
+      },
+      {
+        "eps": "SEDAPAL",
+        "department": "LIMA"
+      },
+      {
+        "eps": "SEDAPAR",
+        "department": "AREQUIPA"
+      }
+    ]
+  }
+}

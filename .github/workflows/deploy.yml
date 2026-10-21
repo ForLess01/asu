@@ -1,0 +1,51 @@
+name: Publish experimental application
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_experimental:
+        type: boolean
+        description: 'Publish the application with reported-duration laboratory explicitly marked experimental'
+        required: true
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: pages-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: inputs.confirm_experimental && vars.ASU_HOSTED_JOBS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Require provisioned deployment credentials
+        run: test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run typecheck && npm test
+      - name: Package the checked application
+        run: npm run build
+      - name: Stamp the release
+        env:
+          CODE_REVISION: ${{ github.sha }}
+        run: node scripts/stamp-release.mjs
+      - name: Publish to a previously created Free Pages project
+        run: npx --yes wrangler@4.151.3 pages deploy dist --project-name asu --branch main
+      - name: Verify the assigned public URL
+        env:
+          ASU_PUBLIC_URL: ${{ vars.ASU_PUBLIC_URL }}
+        run: python3 scripts/smoke_deployment.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: published-static-${{ github.sha }}
+          path: dist/
+          retention-days: 7
